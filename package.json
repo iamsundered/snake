@@ -1,8 +1,8 @@
 {
-  "name": "${PROJECT_NAME}",
+  "name": "2D_platformer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/code/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
