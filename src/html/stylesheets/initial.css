@@ -3,5 +3,28 @@
 body {
     background-color: #686868;
     background-size: cover;
+}
 
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars */
+    height: 100%;
+}
+
+#funsound {
+
+}
+#endGameBtn {
+    position: absolute;
+}
+
+#losingScreen {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

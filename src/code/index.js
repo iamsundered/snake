@@ -1,41 +1,51 @@
 const body = document.getElementsByTagName("body")[0];
 const canvas = document.createElement("canvas");
+
+canvas.style.position = "relative";
+canvas.style.display = "block";
+
 body.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let x = 10;
-let y = 10;
+let x = 100;
+let y = 100;
 const playerWidth = 150;
 const playerHeight = 150;
-const step = 5; // Smaller step for smoother movement
+const step = 5;
 
-let currentDirection = null; // Tracks the current direction ('w', 'a', 's', 'd')
+let currentDirection = null;
 
-// Load the image
 let img = new Image();
 img.src = "../resources/playedgamesbefore.jpg";
 
-// Play audio
 function playedthese() {
     const audio = new Audio("../resources/i-play-these-games-before.mp3");
     audio.play();
 }
 
-// Draw the player
 function drawPlayer(x, y) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //clear the canvas
     ctx.drawImage(img, x, y, playerWidth, playerHeight);
 }
-
-// Update the player position
+let oldX = null;
+let oldY = null;
 function update() {
+    /*if (y ===! Math.max(0, y) || y ===! Math.min(canvas.width, canvas.height) ||
+        x ===! Math.max(0, x) || x ===! Math.min(canvas.width - playerWidth, x)) {
+        gameOver();
+    }*/
+
+    oldX = x;
+    oldY = y;
+
+
     if (currentDirection) {
         switch (currentDirection) {
             case 'w':
                 y -= step;
-                y = Math.max(0, y); // Prevent going out of bounds
+                y = Math.max(0, y); // prevent going out of bounds
                 break;
             case 's':
                 y += step;
@@ -51,24 +61,46 @@ function update() {
                 break;
         }
     }
+
+    if (oldX === x && oldY === y) {
+        gameOver();
+    }
+
     drawPlayer(x, y);
-    requestAnimationFrame(update); // Continue the game loop
+    requestAnimationFrame(update); //continue game loop
 }
 
-// Handle keydown events
+const gameOverScreen = document.createElement('div')
+
+
+function gameOver() {
+    const endText = document.createElement("h1");
+    const node = document.createTextNode("This is new.");
+
+    endText.appendChild(node);
+    body.appendChild(endText);
+
+}
+
+
+// key is pressed:
 document.addEventListener('keydown', (e) => {
     const validKeys = ['w', 'a', 's', 'd'];
     if (validKeys.includes(e.key)) {
-        currentDirection = e.key; // Update the current direction
+        currentDirection = e.key; //update the current direction
     }
 });
 
-// Handle keyup events
+// key is released:
+/*
 document.addEventListener('keyup', (e) => {
     if (e.key === currentDirection) {
-        currentDirection = null; // Stop movement if the current direction key is released
+        currentDirection = null; //stop movement if the current direction key is released
     }
-});
+});*/
 
-// Start the game loop
+//start the game loop
 update();
+
+
+
