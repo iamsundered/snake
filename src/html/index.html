@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheets/initial.css">
-    <title>2D Platformer</title>
+    <title>Supah Snake</title>
+    <link rel="icon" type="image/png" href=../resources/favicon.png>
 
 </head>
 <body onload="update()">
-<div id="losingScreen">
+<div id="losingScreen" class="shake">
     <h1>You Lost</h1>
+    <button id="restart" onclick="restart()">Restart</button>
 </div>
 
 <script src="../code/index.js"></script>

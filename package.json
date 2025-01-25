@@ -1,5 +1,5 @@
 {
-  "name": "2D_platformer",
+  "name": "snake",
   "version": "1.0.0",
   "description": "",
   "main": "src/code/index.js",
