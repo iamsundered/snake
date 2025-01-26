@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheets/initial.css">
     <title>Supah Snake</title>
-    <link rel="icon" type="image/png" href=../resources/favicon.png>
+    <link rel="icon" type="image/png" href=../resources/images/favicon.png>
 
 </head>
-<body onload="update()">
-<div id="losingScreen" class="shake">
-    <h1>You Lost</h1>
-    <button id="restart" onclick="restart()">Restart</button>
+<body>
+<div id="losingScreen">
+    <div id="losingScreenBg">
+        <img src="" alt="snake" id="snake">
+        <h1 id="losingScreenText">Welcome!</h1>
+        <button id="restart" onclick="restart()" tabindex="0">Play</button>
+        <button id="settings" onclick="settings()" tabindex="1">Settings</button>
+        <button id="stats" onclick="statistics()" tabindex="1">Statistics</button>
+    </div>
 </div>
 
 <script src="../code/index.js"></script>

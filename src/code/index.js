@@ -43,16 +43,6 @@ let oldYPos = [player.y];
 // Direction player goes in:
 let currentDirection = null;
 
-
-let img = new Image();
-img.src = "../resources/playedgamesbefore.jpg";
-
-function playedthese() {
-    const audio = new Audio("../resources/i-play-these-games-before.mp3");
-    audio.play();
-}
-
-
 function drawPlayer() {
     ctx.fillStyle = "#13811c";
     ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -134,6 +124,19 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// preloading audio into memory
+const diesAudio = new Audio('../resources/audio_effects/death.mp3');
+const turnAudio = new Audio('../resources/audio_effects/move.mp3')
+
+const effectsList = [turnAudio, diesAudio];
+
+function effectsHandler(effect, volume) {
+
+    effectsList[effect].play();
+    effectsList[effect].volume = volume;
+    
+    console.log("EFFECTS HANDLER IS PLAYING");
+}
 
 function update() {
 
@@ -149,6 +152,7 @@ function update() {
                 (e.key === 'a' && currentDirection !== 'd') ||
                 (e.key === 'd' && currentDirection !== 'a')) {
                 currentDirection = e.key; //update the current direction
+                effectsHandler(0);
             }
         }
     });
@@ -199,12 +203,34 @@ function update() {
 } //update ends
 
 const losingScreen = document.getElementById('losingScreen');
+const losingScreenText = document.getElementById('losingScreenText');
+const menuImg = document.getElementById('snake');
+let imgList = [
+    'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2pvbDVwcjU3aXNxNzIwOGJiMnM2czkxeGxmb24xNmY4NHlzZ2llcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2lbhL8dSGMh8I/giphy.gif',
+    'https://media.giphy.com/media/26DN0U3SqKDG2fTFe/giphy.gif?cid=790b7611m55mxjmw28bo2hqi7n0kjn0wvscs5y1w2chicje6&ep=v1_gifs_search&rid=giphy.gif&ct=g', 
+    'https://media.giphy.com/media/kHlZwlLRAIL4fk9Dga/giphy.gif?cid=ecf05e47ed4dt66kb3zzf38bg25isdx1srn35yz18a060t16&ep=v1_gifs_related&rid=giphy.gif&ct=g',
+    'https://media.giphy.com/media/l3q2Q8YXda7uV9M40/giphy.gif?cid=ecf05e47xxdgnoj8jwkshjm0kdien5ab9pha933ro9vds5uq&ep=v1_gifs_related&rid=giphy.gif&ct=g'
+]
+
+// Loads initial gif/image shown in the menu at start.
+menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function gameOver() {
+    effectsHandler(1, 0.5)
+    
+    //visuals:
     losingScreen.style.visibility = 'visible';
     canvas.classList.add('shake');
+    losingScreen.classList.add('shake');
     setTimeout(() => canvas.classList.remove('shake'), 500);
+    setTimeout(() => losingScreen.classList.remove('shake'), 500);
+    losingScreenText.textContent = 'Game Over!';
     
+    // Randomizing the image shown in the losing screen.
+    menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
+    
+    
+    //changing game state:
     gameHasEnded = true;
 }
 
