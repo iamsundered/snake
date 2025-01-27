@@ -36,7 +36,7 @@ function movePlayer(newX, newY) {
     player.y = Math.floor(newY / gridSize)*gridSize;
 }
 
-// constantly updates and stores all of the snakes(player) body/tail coordinates. 
+// constantly updates and stores all of the snakes(player) body/tail coordinates.
 let oldXPos = [player.x];
 let oldYPos = [player.y];
 
@@ -46,11 +46,11 @@ let currentDirection = null;
 function drawPlayer() {
     ctx.fillStyle = "#13811c";
     ctx.fillRect(player.x, player.y, player.width, player.height);
-    
+
     clearTail();
     selfTailCrashCheck();
     console.log("player head is at: ", player.x, player.y);
-    
+
 }
 
 //clears the trail of the player depending on player.trail value.
@@ -58,14 +58,14 @@ function clearTail() {
     if (oldXPos.length === player.trail || oldYPos.length === player.trail) {
         console.log("if statement passed");
         ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
-        
+
         oldXPos.shift();
         oldYPos.shift();
     }
 }
 
 function selfTailCrashCheck() {
-    
+
     let newOldXPos = oldXPos.slice(0, -1);
     let newOldYPos = oldYPos.slice(0, -1);
 
@@ -81,10 +81,10 @@ function selfTailCrashCheck() {
             gameOver();
         }
     }
-        
-        // todo 
+
+        // todo
         //  MAKE SURE TO DRAW THE TRAIL OVER AND OVER SO IT DOESN'T GET OVER-DRAWN.
-        //  ADD powerups! e.g eat fruit = grow tail, eat something else = game is faster/slower or slowmo 
+        //  ADD powerups! e.g eat fruit = grow tail, eat something else = game is faster/slower or slowmo
         //  e.g slowmo or a bomb.
         //  add textures like snake textures and map textures.
         //  add start menu & polish game over menu.
@@ -134,7 +134,7 @@ function effectsHandler(effect, volume) {
 
     effectsList[effect].play();
     effectsList[effect].volume = volume;
-    
+
     console.log("EFFECTS HANDLER IS PLAYING");
 }
 
@@ -142,15 +142,17 @@ function update() {
 
 // key is pressed:
     document.addEventListener('keydown', (e) => {
-        const validKeys = ['w', 'a', 's', 'd'];
+        const validKeys = ['w', 'a', 's', 'd', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'];
 
         // Only updates if a valid key is pressed.
         if (validKeys.includes(e.key)) {
             // Prevent reversing e.g. if going W, you cant go in S-direction
-            if ((e.key === 'w' && currentDirection !== 's') ||
-                (e.key === 's' && currentDirection !== 'w') ||
-                (e.key === 'a' && currentDirection !== 'd') ||
-                (e.key === 'd' && currentDirection !== 'a')) {
+            if (
+                ((e.key === 'w' || e.key === 'ArrowUp') && (currentDirection !== 's' || currentDirection !== 'ArrowDown')) ||
+                ((e.key === 's' || e.key === 'ArrowDown') && (currentDirection !== 'w' || currentDirection !== 'ArrowUp')) ||
+                ((e.key === 'a' || e.key === 'ArrowLeft') && (currentDirection !== 'd' || currentDirection !== 'ArrowRight')) ||
+                ((e.key === 'd' || e.key === 'ArrowRight') && (currentDirection !== 'a' || currentDirection !== 'ArrowLeft'))
+            ) {
                 currentDirection = e.key; //update the current direction
                 effectsHandler(0);
             }
@@ -162,18 +164,23 @@ function update() {
         let x = player.x;
         let y = player.y;
         switch (currentDirection) {
+            case 'ArrowUp':
+                console.log("Up key works");
             case 'w':
                 y -= player.step;
                 movePlayer(x, y);
                 break;
+            case 'ArrowDown':
             case 's':
                 y += player.step;
                 movePlayer(x, y);
                 break;
+            case 'ArrowLeft':
             case 'a':
                 x -= player.step;
                 movePlayer(x, y);
                 break;
+            case 'ArrowRight':
             case 'd':
                 x += player.step;
                 movePlayer(x, y);
@@ -191,14 +198,14 @@ function update() {
         player.y >= Math.max(bottomBoundary+39 - player.height, 0) || player.y <= Math.min(topBoundary-39, player.y)) {
             gameOver();
     }
-    
+
     drawGrid();
     drawPlayer();
-    
+
     if (!gameHasEnded) {
         setTimeout(update, timeToUpdate);
         //requestAnimationFrame(update); // calls game loop again.
-    }    
+    }
 } //update ends
 
 const losingScreen = document.getElementById('losingScreen');
@@ -206,7 +213,7 @@ const losingScreenText = document.getElementById('losingScreenText');
 const menuImg = document.getElementById('snake');
 let imgList = [
     'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2pvbDVwcjU3aXNxNzIwOGJiMnM2czkxeGxmb24xNmY4NHlzZ2llcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2lbhL8dSGMh8I/giphy.gif',
-    'https://media.giphy.com/media/26DN0U3SqKDG2fTFe/giphy.gif?cid=790b7611m55mxjmw28bo2hqi7n0kjn0wvscs5y1w2chicje6&ep=v1_gifs_search&rid=giphy.gif&ct=g', 
+    'https://media.giphy.com/media/26DN0U3SqKDG2fTFe/giphy.gif?cid=790b7611m55mxjmw28bo2hqi7n0kjn0wvscs5y1w2chicje6&ep=v1_gifs_search&rid=giphy.gif&ct=g',
     'https://media.giphy.com/media/kHlZwlLRAIL4fk9Dga/giphy.gif?cid=ecf05e47ed4dt66kb3zzf38bg25isdx1srn35yz18a060t16&ep=v1_gifs_related&rid=giphy.gif&ct=g',
     'https://media.giphy.com/media/l3q2Q8YXda7uV9M40/giphy.gif?cid=ecf05e47xxdgnoj8jwkshjm0kdien5ab9pha933ro9vds5uq&ep=v1_gifs_related&rid=giphy.gif&ct=g'
 ]
@@ -216,7 +223,7 @@ menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function gameOver() {
     effectsHandler(1, 0.5)
-    
+
     //visuals:
     losingScreen.style.visibility = 'visible';
     canvas.classList.add('shake');
@@ -224,11 +231,11 @@ function gameOver() {
     setTimeout(() => canvas.classList.remove('shake'), 500);
     setTimeout(() => losingScreen.classList.remove('shake'), 500);
     losingScreenText.textContent = 'Game Over!';
-    
+
     // Randomizing the image shown in the losing screen.
     menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
-    
-    
+
+
     //changing game state:
     gameHasEnded = true;
 }
@@ -247,10 +254,7 @@ function restart() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     currentDirection = null;
     timeToUpdate = 500;
-    
+
     console.log("restarting game");
-    
+
 }
-
-
-
