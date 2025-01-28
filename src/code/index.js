@@ -125,7 +125,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('../resources/audio_effects/death.mp3');
+const diesAudio = new Audio('../resources/audio_effects/death3.mp3');
 const turnAudio = new Audio('../resources/audio_effects/move.mp3')
 
 const effectsList = [turnAudio, diesAudio];
@@ -138,21 +138,29 @@ function effectsHandler(effect, volume) {
     console.log("EFFECTS HANDLER IS PLAYING");
 }
 
+
+const validKeys = ['w', 'a', 's', 'd'];
+let unmodifiedKey = null;
+
 function update() {
 
 // key is pressed:
     document.addEventListener('keydown', (e) => {
-        const validKeys = ['w', 'a', 's', 'd'];
+        const key = e.key.toLowerCase();
 
         // Only updates if a valid key is pressed.
-        if (validKeys.includes(e.key)) {
+        if (validKeys.includes(key)) {
+
             // Prevent reversing e.g. if going W, you cant go in S-direction
-            if ((e.key === 'w' && currentDirection !== 's') ||
-                (e.key === 's' && currentDirection !== 'w') ||
-                (e.key === 'a' && currentDirection !== 'd') ||
-                (e.key === 'd' && currentDirection !== 'a')) {
-                currentDirection = e.key; //update the current direction
-                effectsHandler(0);
+            if ((key === 'w' && currentDirection !== 's') ||
+                (key === 's' && currentDirection !== 'w') ||
+                (key === 'a' && currentDirection !== 'd') ||
+                (key === 'd' && currentDirection !== 'a')) {
+                currentDirection = key;
+                console.log("CURRENT DIRECTION UNDER VALIDKEYS CHECK. VALUE IS: ", currentDirection);
+                console.log("key VALUE IS: ", key);
+
+                effectsHandler(0, 1);
             }
         }
     });
@@ -183,6 +191,7 @@ function update() {
         oldYPos.push(y);
         console.log(oldXPos);
         console.log(oldYPos);
+        console.log("Current DIRECTION INSIDE UPDATE LOOP UNDER MOVEMENT CHECK: ",currentDirection);
 
     }
 
@@ -215,7 +224,7 @@ let imgList = [
 menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function gameOver() {
-    effectsHandler(1, 0.5)
+    effectsHandler(1, 1)
     
     //visuals:
     losingScreen.style.visibility = 'visible';
