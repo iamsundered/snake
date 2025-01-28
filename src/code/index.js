@@ -10,6 +10,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 
+
 const gridSize = 40;
 
 // Default player values
@@ -22,6 +23,7 @@ const player = {
     height: gridSize,
 };
 
+
 function drawGrid() {
     for (let x = 0; x < canvas.width; x += gridSize) {
         for (let y = 0; y < canvas.height; y += gridSize) {
@@ -29,6 +31,38 @@ function drawGrid() {
             ctx.strokeRect(x, y, gridSize, gridSize);
         }
     }
+}
+
+const coordinateSystem = [];
+
+// Seperated as its own function instead of being a part of drawGrid() to improve performance.
+// Reasoning: instead of being called every update() like drawGrid(), it only gets called once at start.
+function coordinateGeneration() {
+    for (let x = 0; x < canvas.width; x += gridSize) {
+        const row = [];
+        for (let y = 0; y < canvas.height; y += gridSize) {
+            row.push([x,y]);
+        }
+        coordinateSystem.push(row);
+        
+    }
+    console.table(coordinateSystem);
+}
+// Generate coordinates used by items.
+coordinateGeneration();
+
+function generateItems() {
+    const xIndex = Math.round(Math.random()*coordinateSystem.length)-1; // column
+    const yIndex = Math.round(Math.random()*coordinateSystem.length)-1; //row
+    
+    
+    console.log("x: "+ xIndex + " y: " + yIndex);
+
+    const coordinate = coordinateSystem[yIndex][xIndex];
+    const [itemX, itemY] = coordinate; // Destructure the x, y values
+
+    ctx.fillStyle = "#13811c";
+    ctx.fillRect(itemX, itemY, gridSize, gridSize); // Draw the item
 }
 
 function movePlayer(newX, newY) {
@@ -56,7 +90,6 @@ function drawPlayer() {
 //clears the trail of the player depending on player.trail value.
 function clearTail() {
     if (oldXPos.length === player.trail || oldYPos.length === player.trail) {
-        console.log("if statement passed");
         ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
         
         oldXPos.shift();
@@ -70,14 +103,11 @@ function selfTailCrashCheck() {
     let newOldYPos = oldYPos.slice(0, -1);
 
     const combinedCoordinates = newOldXPos.map((value, index) => [value, newOldYPos[index]]);
-    console.log("Combined array: ", combinedCoordinates);
-
     const currentCoordinates = [player.x, player.y];
 
     for (let i = 0; i < combinedCoordinates.length; i++) {
         //compares the current coordinates with each pair of old coordinates.
         if (combinedCoordinates[i][0] === currentCoordinates[0] && combinedCoordinates[i][1] === currentCoordinates[1]) {
-            console.log(`Match found at index ${i}:`, combinedCoordinates[i]);
             gameOver();
         }
     }
@@ -105,7 +135,6 @@ let timeToUpdate = 100;
 document.addEventListener('keydown', (e) => {
     const validKey = ["Control"];
     if (validKey.includes(e.key)) {
-        console.log("Control was pressed");
         timeToUpdate /= 2;
     }
 });
@@ -113,7 +142,6 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keydown', (e) => {
     const validKey = ["Shift"];
     if (validKey.includes(e.key)) {
-        console.log("Shift was pressed");
         timeToUpdate *= 2;
     }
 });
@@ -125,8 +153,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('../resources/audio_effects/death3.mp3');
-const turnAudio = new Audio('../resources/audio_effects/move.mp3')
+const diesAudio = new Audio('../resources/audio_effects/death.mp3');
+const turnAudio = new Audio('../resources/audio_effects/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
@@ -135,7 +163,6 @@ function effectsHandler(effect, volume) {
     effectsList[effect].play();
     effectsList[effect].volume = volume;
     
-    console.log("EFFECTS HANDLER IS PLAYING");
 }
 
 
@@ -157,10 +184,8 @@ function update() {
                 (key === 'a' && currentDirection !== 'd') ||
                 (key === 'd' && currentDirection !== 'a')) {
                 currentDirection = key;
-                console.log("CURRENT DIRECTION UNDER VALIDKEYS CHECK. VALUE IS: ", currentDirection);
-                console.log("key VALUE IS: ", key);
 
-                effectsHandler(0, 1);
+                effectsHandler(0, 0.2);
             }
         }
     });
@@ -189,9 +214,9 @@ function update() {
         }
         oldXPos.push(x);
         oldYPos.push(y);
-        console.log(oldXPos);
-        console.log(oldYPos);
-        console.log("Current DIRECTION INSIDE UPDATE LOOP UNDER MOVEMENT CHECK: ",currentDirection);
+        //console.log(oldXPos);
+        //console.log(oldYPos);
+        //console.log("Current DIRECTION INSIDE UPDATE LOOP UNDER MOVEMENT CHECK: ",currentDirection);
 
     }
 
@@ -213,18 +238,18 @@ function update() {
 const losingScreen = document.getElementById('losingScreen');
 const losingScreenText = document.getElementById('losingScreenText');
 const menuImg = document.getElementById('snake');
-let imgList = [
+/*let imgList = [
     'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2pvbDVwcjU3aXNxNzIwOGJiMnM2czkxeGxmb24xNmY4NHlzZ2llcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2lbhL8dSGMh8I/giphy.gif',
     'https://media.giphy.com/media/26DN0U3SqKDG2fTFe/giphy.gif?cid=790b7611m55mxjmw28bo2hqi7n0kjn0wvscs5y1w2chicje6&ep=v1_gifs_search&rid=giphy.gif&ct=g', 
     'https://media.giphy.com/media/kHlZwlLRAIL4fk9Dga/giphy.gif?cid=ecf05e47ed4dt66kb3zzf38bg25isdx1srn35yz18a060t16&ep=v1_gifs_related&rid=giphy.gif&ct=g',
     'https://media.giphy.com/media/l3q2Q8YXda7uV9M40/giphy.gif?cid=ecf05e47xxdgnoj8jwkshjm0kdien5ab9pha933ro9vds5uq&ep=v1_gifs_related&rid=giphy.gif&ct=g'
-]
+]/*
 
 // Loads initial gif/image shown in the menu at start.
-menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
+menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];*/
 
 function gameOver() {
-    effectsHandler(1, 1)
+    effectsHandler(1, 0.5)
     
     //visuals:
     losingScreen.style.visibility = 'visible';
@@ -235,7 +260,7 @@ function gameOver() {
     losingScreenText.textContent = 'Game Over!';
     
     // Randomizing the image shown in the losing screen.
-    menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
+    //menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
     
     
     //changing game state:
@@ -244,8 +269,9 @@ function gameOver() {
 
 // Restarting the game by resetting values to default & running update loop.
 function restart() {
+    generateItems();
     gameHasEnded = false;
-    setTimeout(update, 200);
+    setTimeout(update, timeToUpdate);
     //requestAnimationFrame(update);
     player.x = 80;
     player.y = 80;
@@ -255,7 +281,7 @@ function restart() {
     losingScreen.style.visibility = 'hidden';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     currentDirection = null;
-    timeToUpdate = 500;
+    timeToUpdate = 100;
     
     console.log("restarting game");
     
