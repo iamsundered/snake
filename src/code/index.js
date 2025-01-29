@@ -33,37 +33,50 @@ function drawGrid() {
     }
 }
 
-const coordinateSystem = [];
+const coordsX = [];
+const coordsY = [];
 
-// Seperated as its own function instead of being a part of drawGrid() to improve performance.
-// Reasoning: instead of being called every update() like drawGrid(), it only gets called once at start.
 function coordinateGeneration() {
     for (let x = 0; x < canvas.width; x += gridSize) {
-        const row = [];
+        coordsX.push(x);
         for (let y = 0; y < canvas.height; y += gridSize) {
-            row.push([x,y]);
+            coordsY.push(y);
         }
-        coordinateSystem.push(row);
-        
     }
-    console.table(coordinateSystem);
-}
-// Generate coordinates used by items.
-coordinateGeneration();
+} coordinateGeneration();
 
+// Aspect ratio finder:
+function gcd (a, b) {
+    return (b === 0) ? a : gcd (b, a%b);
+}
+const w = screen.width;
+const h = screen.height;
+const r = gcd (w, h);
+
+console.log("Aspect ratio: ",w/r, " : ", h/r);
+
+
+let itemX, itemY;
 function generateItems() {
-    const xIndex = Math.round(Math.random()*coordinateSystem.length)-1; // column
-    const yIndex = Math.round(Math.random()*coordinateSystem.length)-1; //row
-    
-    
-    console.log("x: "+ xIndex + " y: " + yIndex);
+    itemX = coordsX[Math.floor(Math.random() * coordsX.length)];
+    itemY = coordsY[Math.floor(Math.random() * coordsY.length)];
 
-    const coordinate = coordinateSystem[yIndex][xIndex];
-    const [itemX, itemY] = coordinate; // Destructure the x, y values
-
-    ctx.fillStyle = "#13811c";
-    ctx.fillRect(itemX, itemY, gridSize, gridSize); // Draw the item
+    drawItems(itemX, itemY);
+    console.log("WOOOOO: "+itemX, itemY);
 }
+
+function drawItems() {
+    ctx.fillStyle = "#e63535";
+    ctx.fillRect(itemX, itemY, gridSize, gridSize); // draw the item/s
+    console.log("item is at: " + itemX + itemY);
+
+    if (itemX === player.x && itemY === player.y) {
+        player.trail+=1;
+        generateItems();
+    }
+}
+// todo NOW ADD STATS AND SETTINGS TO CHANGE MAP STYLE.
+
 
 function movePlayer(newX, newY) {
     player.x = Math.floor(newX / gridSize)*gridSize;
@@ -228,7 +241,8 @@ function update() {
     
     drawGrid();
     drawPlayer();
-    
+    drawItems();
+
     if (!gameHasEnded) {
         setTimeout(update, timeToUpdate);
         //requestAnimationFrame(update); // calls game loop again.
