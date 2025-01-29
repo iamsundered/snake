@@ -9,6 +9,17 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+/*
+const backgroundImage = new Image();
+backgroundImage.src = ('../resources/images/grassland.gif');
+
+backgroundImage.onload = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx.filter = "blur(10px)";
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    ctx.filter = "none";
+}*/
 
 
 const gridSize = 40;
@@ -25,12 +36,15 @@ const player = {
 
 
 function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 0.2;
     for (let x = 0; x < canvas.width; x += gridSize) {
         for (let y = 0; y < canvas.height; y += gridSize) {
-            ctx.strokeStyle = '#75ca29';
+            ctx.strokeStyle = '#ffffff';
             ctx.strokeRect(x, y, gridSize, gridSize);
         }
     }
+    ctx.globalAlpha = 1;
 }
 
 const coordsX = [];
@@ -57,26 +71,39 @@ console.log("Aspect ratio: ",w/r, " : ", h/r);
 
 
 let itemX, itemY;
+
 function generateItems() {
     itemX = coordsX[Math.floor(Math.random() * coordsX.length)];
     itemY = coordsY[Math.floor(Math.random() * coordsY.length)];
-
     drawItems(itemX, itemY);
-    console.log("WOOOOO: "+itemX, itemY);
 }
+
+function collisionCheck(x, y) {
+    if (x === player.x && y === player.y) {
+        return true;
+    }
+}
+//todo ADD A LIST like drawPlayers loop and make more coords for item gen
+
+const appleTexture = new Image();
+
+appleTexture.src = '../resources/images/apple.png';
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
-    ctx.fillRect(itemX, itemY, gridSize, gridSize); // draw the item/s
-    console.log("item is at: " + itemX + itemY);
+    ctx.drawImage(appleTexture, itemX, itemY, gridSize, gridSize); // draw the item/s
+    
+    console.log("item is at: " + itemX + "X " + itemY + "Y");
+    console.log("player is at: " + player.x + "X " + player.y + "Y");
 
-    if (itemX === player.x && itemY === player.y) {
+    if (collisionCheck(itemX, itemY)) { // if player touches item then:
+        effectsHandler(1, 0.5);
         player.trail+=1;
         generateItems();
     }
 }
-// todo NOW ADD STATS AND SETTINGS TO CHANGE MAP STYLE.
 
+// todo NOW ADD STATS AND SETTINGS TO CHANGE MAP STYLE.
 
 function movePlayer(newX, newY) {
     player.x = Math.floor(newX / gridSize)*gridSize;
@@ -90,15 +117,19 @@ let oldYPos = [player.y];
 // Direction player goes in:
 let currentDirection = null;
 
+const playerTexture = new Image();
+playerTexture.src = '../resources/images/snake-skin.png';
+
+
 function drawPlayer() {
-    ctx.fillStyle = "#13811c";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    
+    for (let i = 0; i < player.trail; i++) {
+        ctx.drawImage(playerTexture, oldXPos[i], oldYPos[i], gridSize, gridSize);
+    }
+
     clearTail();
     selfTailCrashCheck();
-    console.log("player head is at: ", player.x, player.y);
-    
 }
+
 
 //clears the trail of the player depending on player.trail value.
 function clearTail() {
@@ -109,39 +140,21 @@ function clearTail() {
         oldYPos.shift();
     }
 }
-
+// Checks if the player has run into their own tail.
 function selfTailCrashCheck() {
-    
+    // Removes the player head of the character from the array
+    // so that the head doesn't crash into itself.
     let newOldXPos = oldXPos.slice(0, -1);
     let newOldYPos = oldYPos.slice(0, -1);
 
-    const combinedCoordinates = newOldXPos.map((value, index) => [value, newOldYPos[index]]);
-    const currentCoordinates = [player.x, player.y];
-
-    for (let i = 0; i < combinedCoordinates.length; i++) {
+    for (let i = 0; i < newOldXPos.length; i++) {
         //compares the current coordinates with each pair of old coordinates.
-        if (combinedCoordinates[i][0] === currentCoordinates[0] && combinedCoordinates[i][1] === currentCoordinates[1]) {
+        if (collisionCheck(newOldXPos[i], newOldYPos[i])) {
             gameOver();
         }
     }
-        
-        // todo 
-        //  MAKE SURE TO DRAW THE TRAIL OVER AND OVER SO IT DOESN'T GET OVER-DRAWN.
-        //  ADD powerups! e.g eat fruit = grow tail, eat something else = game is faster/slower or slowmo 
-        //  e.g slowmo or a bomb.
-        //  add textures like snake textures and map textures.
-        //  add start menu & polish game over menu.
 }
 
-//generate map values e.g 1 = items, 0 = nothing.
-
-
-let gameHasEnded = false;
-
-const topBoundary = 0;
-const bottomBoundary = canvas.height;
-const leftBoundary = 0;
-const rightBoundary = canvas.width;
 
 let timeToUpdate = 100;
 
@@ -175,15 +188,15 @@ function effectsHandler(effect, volume) {
 
     effectsList[effect].play();
     effectsList[effect].volume = volume;
-    
 }
 
+let gameHasEnded = false;
 
-const validKeys = ['w', 'a', 's', 'd'];
-let unmodifiedKey = null;
 
 function update() {
 
+    
+    const validKeys = ['w', 'a', 's', 'd'];
 // key is pressed:
     document.addEventListener('keydown', (e) => {
         const key = e.key.toLowerCase();
@@ -233,48 +246,113 @@ function update() {
 
     }
 
+    const topBoundary = 0;
+    const bottomBoundary = canvas.height;
+    const leftBoundary = 0;
+    const rightBoundary = canvas.width;
+
     // Checks if player hit the edge of the map, if so then the game ends.
     if (player.x >= Math.max(rightBoundary+39 - player.width, 0) || player.x <= Math.min(leftBoundary-39, player.x) ||
         player.y >= Math.max(bottomBoundary+39 - player.height, 0) || player.y <= Math.min(topBoundary-39, player.y)) {
             gameOver();
     }
-    
     drawGrid();
     drawPlayer();
     drawItems();
-
+    
     if (!gameHasEnded) {
         setTimeout(update, timeToUpdate);
         //requestAnimationFrame(update); // calls game loop again.
-    }    
+    }
 } //update ends
 
-const losingScreen = document.getElementById('losingScreen');
-const losingScreenText = document.getElementById('losingScreenText');
+
+const playScreen = document.getElementById('playScreen');
+const playScreenText = document.getElementById('losingScreenText');
+
+const settingsScreen = document.getElementById('settingsScreen');
+const statScreen = document.getElementById('statScreen');
+
+const menuContainer = document.getElementById('menuContainer');
+
+function menuBackgroundColor(menu, body1, body2, color1, color2) {
+    menu.style.background = "linear-gradient(to bottom, "+color1+", "+ color2+")";
+    document.body.style.background = "linear-gradient(to bottom, "+body1+", "+ body2+")";
+    document.body.style.opacity = "0.7"; // make it only change background and not buttons etc
+}
+
+let bodyColor1 = document.getElementById('bodyColor1');
+let bodyColor2 = document.getElementById('bodyColor2');
+let accent1 = document.getElementById('color1');
+let accent2 = document.getElementById('color2');
+
+// Theme customization:
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'bodyColor1') {
+        bodyColor1.value = e.target.value;
+    } else if (e.target.id === 'bodyColor2') {
+        bodyColor2.value = e.target.value;
+    }
+    else if (e.target.id === 'color1') {
+        accent1.value = e.target.value;
+    } else if (e.target.id === 'color2'){
+        accent2.value = e.target.value;
+    }
+    console.log(accent1.value + ", "+ accent2.value);
+    
+    menuBackgroundColor(playScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
+    menuBackgroundColor(settingsScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
+    menuBackgroundColor(statScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
+})
+
+menuBackgroundColor(playScreen, bodyColor1, bodyColor2, accent1, accent2);
+
+
+
 const menuImg = document.getElementById('snake');
-/*let imgList = [
+let imgList = [
     'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2pvbDVwcjU3aXNxNzIwOGJiMnM2czkxeGxmb24xNmY4NHlzZ2llcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2lbhL8dSGMh8I/giphy.gif',
     'https://media.giphy.com/media/26DN0U3SqKDG2fTFe/giphy.gif?cid=790b7611m55mxjmw28bo2hqi7n0kjn0wvscs5y1w2chicje6&ep=v1_gifs_search&rid=giphy.gif&ct=g', 
     'https://media.giphy.com/media/kHlZwlLRAIL4fk9Dga/giphy.gif?cid=ecf05e47ed4dt66kb3zzf38bg25isdx1srn35yz18a060t16&ep=v1_gifs_related&rid=giphy.gif&ct=g',
     'https://media.giphy.com/media/l3q2Q8YXda7uV9M40/giphy.gif?cid=ecf05e47xxdgnoj8jwkshjm0kdien5ab9pha933ro9vds5uq&ep=v1_gifs_related&rid=giphy.gif&ct=g'
-]/*
+];
+
+function settings() {
+    if (settingsScreen.style.display === "none" || settingsScreen.style.display === "") {
+        settingsScreen.style.display = "flex";
+    } else {
+        settingsScreen.style.display = "none";
+    }
+}
+    
+function stats() {
+    if (statScreen.style.display === "none" || statScreen.style.display === "") {
+        statScreen.style.display = "flex";
+    } else {
+        statScreen.style.display = "none";
+    }
+}
 
 // Loads initial gif/image shown in the menu at start.
-menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];*/
+//menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function gameOver() {
     effectsHandler(1, 0.5)
-    
+
     //visuals:
-    losingScreen.style.visibility = 'visible';
-    canvas.classList.add('shake');
-    losingScreen.classList.add('shake');
-    setTimeout(() => canvas.classList.remove('shake'), 500);
-    setTimeout(() => losingScreen.classList.remove('shake'), 500);
-    losingScreenText.textContent = 'Game Over!';
     
-    // Randomizing the image shown in the losing screen.
-    //menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
+    menuContainer.style.display = 'flex';
+    settingsScreen.style.display = 'none';
+    statScreen.style.display = 'none';
+
+    playScreenText.textContent = "You Lost!";
+
+    canvas.classList.add('shake');
+    playScreen.classList.add('shake');
+    setTimeout(() => canvas.classList.remove('shake'), 500);
+    setTimeout(() => playScreen.classList.remove('shake'), 500);
+    
+    menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
     
     
     //changing game state:
@@ -283,20 +361,27 @@ function gameOver() {
 
 // Restarting the game by resetting values to default & running update loop.
 function restart() {
-    generateItems();
+    console.log("----- RESTART -----");
+    
     gameHasEnded = false;
-    setTimeout(update, timeToUpdate);
-    //requestAnimationFrame(update);
     player.x = 80;
     player.y = 80;
     player.trail = 3;
     oldXPos = [player.x];
     oldYPos = [player.y];
-    losingScreen.style.visibility = 'hidden';
+    console.log(playScreen);
+
+    menuContainer.style.display = 'none';
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     currentDirection = null;
     timeToUpdate = 100;
-    
+
+    generateItems(); // Generate a new item position
+    drawGrid(); // Redraw the grid
+    drawPlayer(); // Redraw the player
+    update(); // Restart game loop
+
     console.log("restarting game");
     
 }
