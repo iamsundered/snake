@@ -9,9 +9,15 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+/* wooooo crazy comment */
+/* wooooo crazy comment */
+/* wooooo crazy comment */
+/* wooooo crazy comment */
+
+
 /*
 const backgroundImage = new Image();
-backgroundImage.src = ('../resources/images/grassland.gif');
+backgroundImage.src = ('resources/images/grassland.gif');
 
 backgroundImage.onload = () => {
     canvas.width = window.innerWidth;
@@ -87,7 +93,7 @@ function collisionCheck(x, y) {
 
 const appleTexture = new Image();
 
-appleTexture.src = '../resources/images/apple.png';
+appleTexture.src = 'resources/images/apple.png';
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
@@ -118,7 +124,7 @@ let oldYPos = [player.y];
 let currentDirection = null;
 
 const playerTexture = new Image();
-playerTexture.src = '../resources/images/snake-skin.png';
+playerTexture.src = 'resources/images/snake-skin.png';
 
 
 function drawPlayer() {
@@ -179,8 +185,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('../resources/audio_effects/death.mp3');
-const turnAudio = new Audio('../resources/audio_effects/move.mp3');
+const diesAudio = new Audio('resources/audio_effects/death.mp3');
+const turnAudio = new Audio('resources/audio_effects/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
