@@ -191,7 +191,7 @@ function effectsHandler(effect, volume) {
 }
 
 let gameHasEnded = false;
-
+let keyIsPressed = false;
 
 function update() {
 
@@ -202,7 +202,7 @@ function update() {
         const key = e.key.toLowerCase();
 
         // Only updates if a valid key is pressed.
-        if (validKeys.includes(key)) {
+        if (validKeys.includes(key) && !keyIsPressed) {
 
             // Prevent reversing e.g. if going W, you cant go in S-direction
             if ((key === 'w' && currentDirection !== 's') ||
@@ -212,6 +212,7 @@ function update() {
                 currentDirection = key;
 
                 effectsHandler(0, 0.2);
+                keyIsPressed = true;
             }
         }
     });
@@ -224,18 +225,22 @@ function update() {
             case 'w':
                 y -= player.step;
                 movePlayer(x, y);
+                keyIsPressed = false;
                 break;
             case 's':
                 y += player.step;
                 movePlayer(x, y);
+                keyIsPressed = false;
                 break;
             case 'a':
                 x -= player.step;
                 movePlayer(x, y);
+                keyIsPressed = false;
                 break;
             case 'd':
                 x += player.step;
                 movePlayer(x, y);
+                keyIsPressed = false;
                 break;
         }
         oldXPos.push(x);
