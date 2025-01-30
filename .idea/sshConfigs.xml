@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="116.203.52.14" id="91afae6a-e193-4b4e-b68b-9b0a562a03f6" keyPath="C:\Users\Oscar\.ssh\sshkeyfolder\sundered_server_key1" port="22" nameFormat="DESCRIPTIVE" username="sundered" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

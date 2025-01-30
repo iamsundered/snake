@@ -369,6 +369,7 @@ function restart() {
     console.log("----- RESTART -----");
     
     gameHasEnded = false;
+    keyIsPressed = false;
     player.x = 80;
     player.y = 80;
     player.trail = 3;
