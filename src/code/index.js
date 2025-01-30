@@ -9,11 +9,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-/* wooooo crazy comment */
-/* wooooo crazy comment */
-/* wooooo crazy comment */
-/* wooooo crazy comment */
-
 
 /*
 const backgroundImage = new Image();
