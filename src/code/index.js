@@ -9,6 +9,12 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
+/* wAAAAAAAAAAAAAAAAAAAAAAA */
 
 /*
 const backgroundImage = new Image();
@@ -340,7 +346,7 @@ function stats() {
 }
 
 // Loads initial gif/image shown in the menu at start.
-menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
+//menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function gameOver() {
     effectsHandler(1, 0.5)
