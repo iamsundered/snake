@@ -13,8 +13,6 @@ canvas.height = window.innerHeight;
 /* wAAAAAAAAAAAAAAAAAAAAAAA */
 /* wAAAAAAAAAAAAAAAAAAAAAAA */
 /* wAAAAAAAAAAAAAAAAAAAAAAA */
-/* wAAAAAAAAAAAAAAAAAAAAAAA */
-/* wAAAAAAAAAAAAAAAAAAAAAAA */
 
 /*
 const backgroundImage = new Image();
