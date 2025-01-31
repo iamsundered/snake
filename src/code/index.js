@@ -189,13 +189,12 @@ const turnAudio = new Audio('src/resources/audio/move.mp3');
 const effectsList = [turnAudio, diesAudio];
 
 function effectsHandler(effect, volume) {
-    if (gameHasEnded) {
-        return;
-    }
-    
     effectsList[effect].play();
     effectsList[effect].volume = volume;
 }
+
+diesAudio.onerror = () => console.error("Failed to load death.mp3! Check the path.");
+turnAudio.onerror = () => console.error("Failed to load move.mp3! Check the path.");
 
 function testSound() {
     diesAudio.play();    
