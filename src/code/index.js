@@ -11,6 +11,7 @@ canvas.height = window.innerHeight;
 
 /* OOOOOOOOO */
 /* OOOOOOOOO */
+/* OOOOOOOOO */
 
 /*
 const backgroundImage = new Image();
@@ -343,6 +344,15 @@ function stats() {
         statScreen.style.display = "none";
     }
 }
+
+
+appleTexture.onload = () => console.log("Apple texture loaded successfully!");
+appleTexture.onerror = () => console.error("Failed to load apple texture. Check the path!");
+
+playerTexture.onload = () => console.log("Snake skin texture loaded successfully!");
+playerTexture.onerror = () => console.error("Failed to load snake skin texture. Check the path!");
+
+
 
 // Loads initial gif/image shown in the menu at start.
 //menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
