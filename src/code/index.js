@@ -183,8 +183,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('/snake/src/resources/audio/death.mp3');
-const turnAudio = new Audio('/snake/src/resources/audio/move.mp3');
+const diesAudio = new Audio('src/resources/audio/death.mp3');
+const turnAudio = new Audio('src/resources/audio/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
