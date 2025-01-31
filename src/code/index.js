@@ -183,15 +183,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('/snake/src/resources/audio_effects/death.mp3');
-const turnAudio = new Audio('/snake/src/resources/audio_effects/move.mp3');
+const diesAudio = new Audio('/snake/src/resources/audio/death.mp3');
+const turnAudio = new Audio('/snake/src/resources/audio/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
 function effectsHandler(effect, volume) {
-
+    if (gameHasEnded) {
+        return;
+    }
+    
     effectsList[effect].play();
     effectsList[effect].volume = volume;
+}
+
+function testSound() {
+    diesAudio.play();    
 }
 
 let gameHasEnded = false;
