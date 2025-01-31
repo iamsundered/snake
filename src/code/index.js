@@ -96,7 +96,7 @@ appleTexture.src = '/snake/src/resources/images/apple.png';
 function drawItems() {
     ctx.fillStyle = "#e63535";
     ctx.drawImage(appleTexture, itemX, itemY, gridSize, gridSize); // draw the item/s
-    
+
     console.log("item is at: " + itemX + "X " + itemY + "Y");
     console.log("player is at: " + player.x + "X " + player.y + "Y");
 
@@ -139,7 +139,7 @@ function drawPlayer() {
 function clearTail() {
     if (oldXPos.length === player.trail || oldYPos.length === player.trail) {
         ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
-        
+
         oldXPos.shift();
         oldYPos.shift();
     }
@@ -183,8 +183,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('/snake/src/resources/audio_effects/death.mp3');
-const turnAudio = new Audio('/snake/src/resources/audio_effects/move.mp3');
+const diesAudio = new Audio('resources/audio_effects/death.mp3');
+const turnAudio = new Audio('resources/audio_effects/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
@@ -199,7 +199,7 @@ let keyIsPressed = false;
 
 function update() {
 
-    
+
     const validKeys = ['w', 'a', 's', 'd'];
 // key is pressed:
     document.addEventListener('keydown', (e) => {
@@ -263,12 +263,12 @@ function update() {
     // Checks if player hit the edge of the map, if so then the game ends.
     if (player.x >= Math.max(rightBoundary+39 - player.width, 0) || player.x <= Math.min(leftBoundary-39, player.x) ||
         player.y >= Math.max(bottomBoundary+39 - player.height, 0) || player.y <= Math.min(topBoundary-39, player.y)) {
-            gameOver();
+        gameOver();
     }
     drawGrid();
     drawPlayer();
     drawItems();
-    
+
     if (!gameHasEnded) {
         setTimeout(update, timeToUpdate);
         //requestAnimationFrame(update); // calls game loop again.
@@ -308,7 +308,7 @@ document.addEventListener('input', (e) => {
         accent2.value = e.target.value;
     }
     console.log(accent1.value + ", "+ accent2.value);
-    
+
     menuBackgroundColor(playScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
     menuBackgroundColor(settingsScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
     menuBackgroundColor(statScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
@@ -336,7 +336,7 @@ function settings() {
         settingsScreen.style.display = "none";
     }
 }
-    
+
 function stats() {
     if (statScreen.style.display === "none" || statScreen.style.display === "") {
         statScreen.style.display = "flex";
@@ -361,7 +361,7 @@ function gameOver() {
     effectsHandler(1, 0.5)
 
     //visuals:
-    
+
     menuContainer.style.display = 'flex';
     settingsScreen.style.display = 'none';
     statScreen.style.display = 'none';
@@ -372,10 +372,10 @@ function gameOver() {
     playScreen.classList.add('shake');
     setTimeout(() => canvas.classList.remove('shake'), 500);
     setTimeout(() => playScreen.classList.remove('shake'), 500);
-    
+
     menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
-    
-    
+
+
     //changing game state:
     gameHasEnded = true;
 }
@@ -383,7 +383,7 @@ function gameOver() {
 // Restarting the game by resetting values to default & running update loop.
 function restart() {
     console.log("----- RESTART -----");
-    
+
     gameHasEnded = false;
     keyIsPressed = false;
     player.x = 80;
@@ -394,7 +394,7 @@ function restart() {
     console.log(playScreen);
 
     menuContainer.style.display = 'none';
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     currentDirection = null;
     timeToUpdate = 100;
@@ -405,7 +405,7 @@ function restart() {
     update(); // Restart game loop
 
     console.log("restarting game");
-    
+
 }
 
 
