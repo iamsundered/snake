@@ -328,6 +328,7 @@ const menuImg = document.getElementById('snake');
 let imgList = [
     gif1, gif2, gif3, gif4
 ];
+menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 function settings() {
     if (settingsScreen.style.display === "none" || settingsScreen.style.display === "") {
