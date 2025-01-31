@@ -91,7 +91,7 @@ function collisionCheck(x, y) {
 
 const appleTexture = new Image();
 
-appleTexture.src = 'resources/images/apple.png';
+appleTexture.src = '/snake/src/resources/images/apple.png';
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
@@ -122,7 +122,7 @@ let oldYPos = [player.y];
 let currentDirection = null;
 
 const playerTexture = new Image();
-playerTexture.src = 'resources/images/snake-skin.png';
+playerTexture.src = '/snake/src/resources/images/snake-skin.png';
 
 
 function drawPlayer() {
