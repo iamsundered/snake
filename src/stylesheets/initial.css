@@ -13,7 +13,6 @@ html, body {
     overflow: hidden;
 }
 
-
 #menuContainer {
     height: 100vh;
     width: 100vw;
@@ -45,15 +44,15 @@ html, body {
     border-radius: 10px;
     background: black; /*try fk around here with opacity and reverse enginer rgba shit*/
     min-width: 270px;
+    min-height: 300px;
     width: 250%;
-    height: 600px;
+    height: 690px;
     overflow: hidden;
 }
 
 #settingsScreen, #statScreen {
     display: none;
 }
-
 
 #snake {
     height: 19.5em;
@@ -62,6 +61,10 @@ html, body {
 }
 
 #playScreen, #settingsScreen, #statScreen h1 {
+}
+a {
+    text-decoration: none;
+    color: white;
 }
 
 #menuScreen button {
@@ -76,6 +79,10 @@ html, body {
     border-radius: 5px;
     color: white;
     cursor: pointer;
+    transition: 0.2s;
+}
+#menuScreen button:hover {
+    background: rgba(35, 35, 35, 1);
 }
 
 
@@ -83,6 +90,16 @@ html, body {
     display: flex;
     flex-direction: row;
 }
+
+#ingame-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+}
+
 
 
 .shake {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/snake/src/stylesheets/initial.css">
     <title>Supah Snake</title>
-    <link rel="icon" type="image/png" href="resources/images/snake-pixels2.png">
+    <link rel="icon" type="image/png" href="/snake/src/resources/images/snake-pixels2.png">
 
 </head>
 <body>
@@ -31,12 +31,15 @@
             <button id="restart" onclick="restart()" tabindex="0">Play</button>
             <button id="settings" onclick="settings()" tabindex="1">Settings</button>
             <button id="stats" onclick="stats()" tabindex="2">Statistics</button>
-            <button onclick="testSound()" tabindex="3">test</button>
+            <button tabindex="3"><a href="https://games.sundered.net/">Go Back</a></button>
         </div>
         <div id="statScreen">
             <button>stats</button>
         </div>
     </div>
+</div>
+<div id="ingame-stats">
+    <p id="score">Score: 0</p>
 </div>
 <script src="/snake/src/code/index.js"></script>
 </body>

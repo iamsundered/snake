@@ -6,24 +6,21 @@ canvas.style.display = "block";
 
 body.appendChild(canvas);
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 
-/* OOOOOOOOO */
-/* OOOOOOOOO */
-/* OOOOOOOOO */
+canvas.width = window.innerWidth/1.5; // MAKE IT SO U CAN DECIDE MAP SIZE IN SETTINGS
+canvas.height = window.innerHeight/1.5;
 
-/*
-const backgroundImage = new Image();
-backgroundImage.src = ('resources/images/grassland.gif');
+const canvasDiv = document.createElement("div");
+canvasDiv.style.display = "flex";
+canvasDiv.style.justifyContent = "center";
+canvasDiv.style.alignItems = "center";
+canvasDiv.style.height = "100vh";
+canvasDiv.style.width = "100vw";
+canvasDiv.style.top = "0";
+canvasDiv.style.left = "0";
 
-backgroundImage.onload = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctx.filter = "blur(10px)";
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    ctx.filter = "none";
-}*/
+canvasDiv.appendChild(canvas);
+body.appendChild(canvasDiv);
 
 
 const gridSize = 40;
@@ -36,6 +33,7 @@ const player = {
     trail: 4,
     width: gridSize,
     height: gridSize,
+    score: 0,
 };
 
 
@@ -87,11 +85,12 @@ function collisionCheck(x, y) {
         return true;
     }
 }
-//todo ADD A LIST like drawPlayers loop and make more coords for item gen
 
 const appleTexture = new Image();
 
 appleTexture.src = "/snake/src/resources/images/apple.png";
+const scoreElement = document.getElementById("score");
+let score = 0;
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
@@ -103,6 +102,8 @@ function drawItems() {
     if (collisionCheck(itemX, itemY)) { // if player touches item then:
         effectsHandler(1, 0.5);
         player.trail+=1;
+        score+=1;
+        scoreElement.innerHTML = "Score: "+score;
         generateItems();
     }
 }
@@ -195,10 +196,6 @@ function effectsHandler(effect, volume) {
 
 diesAudio.onerror = () => console.error("Failed to load death.mp3! Check the path.");
 turnAudio.onerror = () => console.error("Failed to load move.mp3! Check the path.");
-
-function testSound() {
-    diesAudio.play();    
-}
 
 let gameHasEnded = false;
 let keyIsPressed = false;
@@ -352,17 +349,6 @@ function stats() {
 }
 
 
-appleTexture.onload = () => console.log("Apple texture loaded successfully!");
-appleTexture.onerror = () => console.error("Failed to load apple texture. Check the path!");
-
-playerTexture.onload = () => console.log("Snake skin texture loaded successfully!");
-playerTexture.onerror = () => console.error("Failed to load snake skin texture. Check the path!");
-
-
-
-// Loads initial gif/image shown in the menu at start.
-//menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
-
 function gameOver() {
     effectsHandler(1, 0.5)
 
@@ -395,6 +381,7 @@ function restart() {
     player.x = 80;
     player.y = 80;
     player.trail = 3;
+    
     oldXPos = [player.x];
     oldYPos = [player.y];
     console.log(playScreen);
