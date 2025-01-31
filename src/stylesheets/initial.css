@@ -67,7 +67,7 @@ a {
     color: white;
 }
 
-#menuScreen button {
+#menuScreen button, #menuScreen a {
     width: 80%;
     height: 50px;
     margin-top: 10px;
@@ -81,7 +81,15 @@ a {
     cursor: pointer;
     transition: 0.2s;
 }
-#menuScreen button:hover {
+
+#menuScreen a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#menuScreen button:hover, #menuScreen a:hover {
     background: rgba(35, 35, 35, 1);
 }
 
