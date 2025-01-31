@@ -91,7 +91,7 @@ function collisionCheck(x, y) {
 
 const appleTexture = new Image();
 
-appleTexture.src = 'resources/images/apple.png';
+appleTexture.src = '/src/resources/images/apple.png';
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
@@ -122,7 +122,7 @@ let oldYPos = [player.y];
 let currentDirection = null;
 
 const playerTexture = new Image();
-playerTexture.src = 'resources/images/snake-skin.png';
+playerTexture.src = '/src/resources/images/snake-skin.png';
 
 
 function drawPlayer() {
@@ -183,8 +183,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // preloading audio into memory
-const diesAudio = new Audio('resources/audio/death.mp3');
-const turnAudio = new Audio('resources/audio/move.mp3');
+const diesAudio = new Audio('/src/resources/audio/death.mp3');
+const turnAudio = new Audio('/src/resources/audio/move.mp3');
 
 const effectsList = [turnAudio, diesAudio];
 
