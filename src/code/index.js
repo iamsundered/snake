@@ -109,6 +109,7 @@ function drawItems() {
 }
 
 // todo NOW ADD STATS AND SETTINGS TO CHANGE MAP STYLE.
+// TODO SOMETHING SOMETHING CSS ISNT WORKING LOOK IT UPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 function movePlayer(newX, newY) {
     player.x = Math.floor(newX / gridSize)*gridSize;
@@ -381,6 +382,8 @@ function restart() {
     player.x = 80;
     player.y = 80;
     player.trail = 3;
+    score = 0;
+    scoreElement.innerHTML = "Score: "+score;
     
     oldXPos = [player.x];
     oldYPos = [player.y];
