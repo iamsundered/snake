@@ -5,41 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/snake/src/stylesheets/initial.css">
     <title>Supah Snake</title>
-    <link rel="icon" type="image/png" href="/snake/src/resources/images/snake-pixels2.png">
+    <link rel="icon" type="image/png" href="/snake/src/resources/images/favicon.png">
 
 </head>
 <body>
 <div id="menuContainer">
     <div id="menuScreen">
-        <div id="settingsScreen">
-            <button>settings</button>
-            <div id="bodyColorContainer">
-                <label for="bodyColor1">main</label>
-                <input type="color" id="bodyColor1" value="#0a3014">
-                <input type="color" id="bodyColor2" value="#30600a">
-            </div>
-            <div id="accentColorContainer">
-                <label for="color1">accent</label>
-                <input type="color" id="color1" value="#000000">
 
-                <input type="color" id="color2" value="#000000">
+        <div id="settingsScreen">
+            <div id="map-section">
+                <h4>Map size</h4>
+                <div id="compact"><label for="compactMap">Compact</label><input type="radio" name="map-size" id="compactMap" onclick="drawGrid()"></div>
+                <div id="normal"><label for="normalMap">Normal</label><input type="radio" name="map-size" id="normalMap" checked onclick="drawGrid()"></div>
+                <div id="expanded"><label for="expandedMap">Expanded</label><input type="radio" name="map-size" id="expandedMap" onclick="drawGrid()"></div>
+
             </div>
+            <div id="themes-section">
+                <h4>Theme</h4>
+                <div id="colorContainer">
+                    <input type="color" id="color1" value="#000000">
+                    <input type="color" id="color2" value="#000000">
+                    <input type="color" id="bodyColor1" value="#0a3014">
+                    <input type="color" id="bodyColor2" value="#30600a">
+                </div>
+            </div>
+            <button onclick="settingsScreen.style.display='none'">close</button>
         </div>
+
         <div id="playScreen">
             <img src="" alt="snake" id="snake">
             <h1 id="losingScreenText">Welcome!</h1>
             <button id="restart" onclick="restart()" tabindex="0">Play</button>
-            <button id="settings" onclick="settings()" tabindex="1">Settings</button>
-            <button id="stats" onclick="stats()" tabindex="2">Statistics</button>
-            <a href="https://games.sundered.net/" tabindex="3">Go Back</a>
+            <button id="stats" onclick="stats(); document.getElementById('statScreen').scrollIntoView({behavior: 'smooth'})" tabindex="2">Stats</button>
+            <button id="settings" onclick="settings(); document.getElementById('settingsScreen').scrollIntoView({behavior: 'smooth'});" tabindex="1">Settings</button>
+            <button onclick="window.location.href='https://games.sundered.net/'">Go Back</button>
+
+
         </div>
+
         <div id="statScreen">
-            <button>stats</button>
+            <button onclick="statScreen.style.display='none'">close</button>
         </div>
     </div>
 </div>
 <div id="ingame-stats">
-    <p id="score">Score: 0</p>
+    <div id="ingame-stats-container">
+        <p id="score"></p> <!-- ⭐ 0 -->
+        <p id="deaths"></p> <!-- 💀 0 -->
+    </div>
 </div>
 <script src="/snake/src/code/index.js"></script>
 </body>

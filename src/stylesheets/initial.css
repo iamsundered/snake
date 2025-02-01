@@ -4,19 +4,21 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    width: 100vw;
     background: linear-gradient(to bottom, #0a3014, #30600a);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 
 html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 
 #menuContainer {
     height: 100vh;
     width: 100vw;
-    position: relative;
+    position: absolute;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -24,7 +26,6 @@ html, body {
     justify-content: center;
     z-index: 1000;
     gap: 1.5%;
-    padding: 0 2%;
 }
 
 #menuScreen {
@@ -32,7 +33,49 @@ html, body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
+}
+#menuScreen h1 {
+    user-select: none;
+}
+
+#settingsScreen {
+    order: 1;
+}
+#playScreen {
+    order: 2;
+}
+#statScreen {
+    order: 3;
+}
+
+@media screen and (max-width: 425px) {
+    * {
+        max-width: 100vw;
+    }
+    #menuScreen {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #playScreen, #settingsScreen, #statScreen {
+        width: 90%;
+        min-width: 270px;
+    }
+    #playScreen {
+        order: 1;
+    }
+    #settingsScreen {
+        order: 2;
+    }
+    #statScreen {
+        order: 3;
+    }
+}
+@media screen and (min-width: 426px) {
+    #settingsScreen {
+    }
+    #statScreen {
+    }
 }
 
 #playScreen, #settingsScreen, #statScreen {
@@ -42,12 +85,12 @@ html, body {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    background: black; /*try fk around here with opacity and reverse enginer rgba shit*/
+    background: black;
+    padding: 0 12px;
     min-width: 270px;
-    min-height: 300px;
-    width: 250%;
     height: 690px;
     overflow: hidden;
+    border: 1px solid #616161;
 }
 
 #settingsScreen, #statScreen {
@@ -60,58 +103,110 @@ html, body {
     object-fit: cover;
 }
 
-#playScreen, #settingsScreen, #statScreen h1 {
-}
 a {
     text-decoration: none;
     color: white;
 }
 
-#menuScreen button, #menuScreen a {
+
+#menuScreen button {
     width: 80%;
     height: 50px;
     margin-top: 10px;
     font-size: 20px;
     font-weight: bold;
-    background: rgba(35, 35, 35, 0.73);
+    background: rgba(35, 35, 35, 0.75);
     border: #959595 solid 1px;
     box-shadow: 0 0 10px 0 rgba(64, 64, 64, 0.75);
     border-radius: 5px;
     color: white;
     cursor: pointer;
+}
+#menuScreen button:active {
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.75);
+}
+
+#menuScreen button:hover {
     transition: 0.2s;
-}
-
-#menuScreen a {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-#menuScreen button:hover, #menuScreen a:hover {
     background: rgba(35, 35, 35, 1);
 }
 
 
-#bodyColorContainer, #accentColorContainer {
-    display: flex;
-    flex-direction: row;
-}
-
-#ingame-stats {
+#map-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #616161;
+    border-radius: 5px;
+    padding: 0 10px 10px 10px;
+    width: 90%;
+}
+
+
+
+#themes-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #616161;
+    border-radius: 5px;
+    padding: 0 10px 10px 10px;
+    width: 90%;
+}
+
+#colorContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+input[type="color"] {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #cfcfcf;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+
+#ingame-stats {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
     color: white;
+    user-select: none;
+}
+
+#ingame-stats-container {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    width: 100px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.39);
+    border: #959595 solid 1px;
+    border-radius: 100px;
+    margin-top: 10px;
 }
 
 
 
 .shake {
-    animation: shake 0.5s;
+    animation: shake 0.5s forwards;
     animation-iteration-count: infinite;
 }
 
@@ -120,4 +215,19 @@ a {
     10% { transform: translate(-1px, -2px) rotate(-1deg); }
     20% { transform: translate(-3px, 0px) rotate(1deg); }
     30% { transform: translate(3px, 2px) rotate(0deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+.fadeIn {
+    animation: fadeIn 0.5s forwards;
+}
+.fadeOut {
+    animation: fadeOut 0.5s forwards;
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }

@@ -7,8 +7,18 @@ canvas.style.display = "block";
 body.appendChild(canvas);
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth/1.5; // MAKE IT SO U CAN DECIDE MAP SIZE IN SETTINGS
-canvas.height = window.innerHeight/1.5;
+
+const statsContainer = document.getElementById("ingame-stats-container")
+
+const scoreElement = document.getElementById("score");
+let score = 0;
+
+const deathsElement = document.getElementById('deaths');
+let deaths = 0;
+
+
+canvas.width = window.innerWidth; // MAKE IT SO U CAN DECIDE MAP SIZE IN SETTINGS
+canvas.height = window.innerHeight;
 
 const canvasDiv = document.createElement("div");
 canvasDiv.style.display = "flex";
@@ -33,44 +43,66 @@ const player = {
     trail: 4,
     width: gridSize,
     height: gridSize,
-    score: 0,
 };
 
+const compact = document.getElementById("compactMap");
+const normal = document.getElementById("normalMap");
+const expanded = document.getElementById("expandedMap");
+
+const compactWidth = canvas.width * 0.5;
+const compactHeight = canvas.height * 0.5;
+
+const normalWidth = canvas.width * 0.75;
+const normalHeight = canvas.height * 0.75;
+
+const expandedWidth = window.innerWidth;
+const expandedHeight = window.innerHeight;
+
+const coordsX = [];
+const coordsY = [];
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = 0.2;
+    
+    if (compact.checked) {
+        canvas.width = compactWidth;
+        canvas.height = compactHeight;           // AAAAAAAAAAAAAAAAAAAAAAAAAA SOMETHING IS WRONG ITEMS ARENT GENERATING INSIDE NEW CANVAS!!!!
+        console.log("compact");
+    } else if (normal.checked) {
+        canvas.width = normalWidth;
+        canvas.height = normalHeight;
+        console.log("normal");
+    } else if (expanded.checked) {
+        canvas.width = expandedWidth;
+        canvas.height = expandedHeight;
+        console.log("expanded");
+    }
+    
+    
+    
+    // Makes sure there are only full squares and not e.g. 1/2 or 1/3 etc.
+    let remainderWidth = canvas.width % 40;
+    let remainderHeight = canvas.height % 40;
+    
+    if (remainderWidth !== 0 ) {
+        canvas.width += (40 - remainderWidth)-40;
+    }
+    if (remainderHeight !== 0 ) {
+        canvas.height += (40 - remainderHeight)-40;
+    }
+        
+        
     for (let x = 0; x < canvas.width; x += gridSize) {
+        coordsX.push(x);
         for (let y = 0; y < canvas.height; y += gridSize) {
+            coordsY.push(y);
             ctx.strokeStyle = '#ffffff';
             ctx.strokeRect(x, y, gridSize, gridSize);
         }
     }
     ctx.globalAlpha = 1;
 }
-
-const coordsX = [];
-const coordsY = [];
-
-function coordinateGeneration() {
-    for (let x = 0; x < canvas.width; x += gridSize) {
-        coordsX.push(x);
-        for (let y = 0; y < canvas.height; y += gridSize) {
-            coordsY.push(y);
-        }
-    }
-} coordinateGeneration();
-
-// Aspect ratio finder:
-function gcd (a, b) {
-    return (b === 0) ? a : gcd (b, a%b);
-}
-const w = screen.width;
-const h = screen.height;
-const r = gcd (w, h);
-
-console.log("Aspect ratio: ",w/r, " : ", h/r);
-
 
 let itemX, itemY;
 
@@ -89,27 +121,23 @@ function collisionCheck(x, y) {
 const appleTexture = new Image();
 
 appleTexture.src = "/snake/src/resources/images/apple.png";
-const scoreElement = document.getElementById("score");
-let score = 0;
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
     ctx.drawImage(appleTexture, itemX, itemY, gridSize, gridSize); // draw the item/s
+    console.log("itemX: " + itemX + " itemY: " + itemY);
 
-    console.log("item is at: " + itemX + "X " + itemY + "Y");
-    console.log("player is at: " + player.x + "X " + player.y + "Y");
+    //console.log("item is at: " + itemX + "X " + itemY + "Y");
+    //console.log("player is at: " + player.x + "X " + player.y + "Y");
 
     if (collisionCheck(itemX, itemY)) { // if player touches item then:
         effectsHandler(1, 0.5);
         player.trail+=1;
         score+=1;
-        scoreElement.innerHTML = "Score: "+score;
+        scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
         generateItems();
     }
 }
-
-// todo NOW ADD STATS AND SETTINGS TO CHANGE MAP STYLE.
-// TODO SOMETHING SOMETHING CSS ISNT WORKING LOOK IT UPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 function movePlayer(newX, newY) {
     player.x = Math.floor(newX / gridSize)*gridSize;
@@ -146,6 +174,7 @@ function clearTail() {
         oldYPos.shift();
     }
 }
+
 // Checks if the player has run into their own tail.
 function selfTailCrashCheck() {
     // Removes the player head of the character from the array
@@ -201,30 +230,83 @@ turnAudio.onerror = () => console.error("Failed to load move.mp3! Check the path
 let gameHasEnded = false;
 let keyIsPressed = false;
 
-function update() {
 
 
-    const validKeys = ['w', 'a', 's', 'd'];
+const validKeys = ['w', 'a', 's', 'd'];
 // key is pressed:
-    document.addEventListener('keydown', (e) => {
-        const key = e.key.toLowerCase();
+document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
 
-        // Only updates if a valid key is pressed.
-        if (validKeys.includes(key) && !keyIsPressed) {
+    // Only updates if a valid key is pressed.
+    if (validKeys.includes(key) && !keyIsPressed) {
 
-            // Prevent reversing e.g. if going W, you cant go in S-direction
-            if ((key === 'w' && currentDirection !== 's') ||
-                (key === 's' && currentDirection !== 'w') ||
-                (key === 'a' && currentDirection !== 'd') ||
-                (key === 'd' && currentDirection !== 'a')) {
-                currentDirection = key;
+        // Prevent reversing e.g. if going W, you cant go in S-direction
+        if ((key === 'w' && currentDirection !== 's') ||
+            (key === 's' && currentDirection !== 'w') ||
+            (key === 'a' && currentDirection !== 'd') ||
+            (key === 'd' && currentDirection !== 'a')) {
+            currentDirection = key;
 
-                effectsHandler(0, 0.2);
-                keyIsPressed = true;
-            }
+            effectsHandler(0, 0.2);
+            keyIsPressed = true;
         }
-    });
+    }
+});
 
+
+
+let startX, startY, endX, endY;
+// Swipe motions:
+document.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+})
+
+let swipe = "";
+document.addEventListener('touchend', (e) => {
+    endX = e.changedTouches[0].clientX;
+    endY = e.changedTouches[0].clientY;
+
+    // Takes distance of start of gesture to end.
+    let deltaX = Math.abs(endX - startX);
+    let deltaY = Math.abs(endY - startY);
+    
+    console.log("deltaX: " + deltaX + " deltaY: " + deltaY);
+    console.log("startX: " + startX + " startY: " + startY);
+    console.log("endX: " + endX + " endY: " + endY);
+    console.log("swipe: " + swipe)
+
+    // if player has 
+    if (deltaX > deltaY && (deltaX > 30 || deltaY > 30)) {
+        if (endX > startX) {
+            swipe = 'd';
+        } else {
+            swipe = 'a';
+        }
+        effectsHandler(0, 0.2);
+        keyIsPressed = true;
+    } else if (deltaY > deltaX && (deltaX > 30 || deltaY > 30)){
+        if (endY > startY) {
+            swipe = "s";
+        } else {
+            swipe = "w"
+        }
+    }
+        // Prevent reversing e.g. if going W, you cant go in S-direction
+        if ((swipe === 'w' && currentDirection !== 's') ||
+            (swipe === 's' && currentDirection !== 'w') ||
+            (swipe === 'a' && currentDirection !== 'd') || // TODO                                            MAKE SURE TO ADD TEXTURES FOR TURNING AND SHIT
+            (swipe === 'd' && currentDirection !== 'a')) {
+            currentDirection = swipe;
+
+            effectsHandler(0, 0.2);
+            keyIsPressed = true;
+        }
+});
+
+
+function update() {
+    
     // if given a direction & the player hasn't crashed then move in 'currentDirection'
     if (currentDirection) {
         let x = player.x;
@@ -255,7 +337,7 @@ function update() {
         oldYPos.push(y);
         //console.log(oldXPos);
         //console.log(oldYPos);
-        //console.log("Current DIRECTION INSIDE UPDATE LOOP UNDER MOVEMENT CHECK: ",currentDirection);
+        console.log("Current DIRECTION: ",currentDirection);
 
     }
 
@@ -291,7 +373,8 @@ const menuContainer = document.getElementById('menuContainer');
 function menuBackgroundColor(menu, body1, body2, color1, color2) {
     menu.style.background = "linear-gradient(to bottom, "+color1+", "+ color2+")";
     document.body.style.background = "linear-gradient(to bottom, "+body1+", "+ body2+")";
-    document.body.style.opacity = "0.7"; // make it only change background and not buttons etc
+    document.body.style.backgroundRepeat = "repeat-y";
+    document.body.style.opacity = "0.7";
 }
 
 let bodyColor1 = document.getElementById('bodyColor1');
@@ -333,31 +416,78 @@ let imgList = [
 ];
 menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
-function settings() {
-    if (settingsScreen.style.display === "none" || settingsScreen.style.display === "") {
-        settingsScreen.style.display = "flex";
+// To make sure settings() & stats () knows they're hidden.
+
+if (screen.width <= 425) {
+    settingsScreen.style.display = "none";
+    statScreen.style.display = "none";
+}
+
+if (screen.width <= 768 && screen.width >= 426) {
+    document.getElementById('settings').addEventListener('click', function () {
+        if (statScreen.style.display !== "none") { // stat menu on ->
+            statScreen.style.display = "none";
+            settingsScreen.style.display = "flex";
+            settingsScreen.style.order = window.getComputedStyle(statScreen).order;
+            statScreen.style.order = "3";
+        }
+    });
+    document.getElementById('stats').addEventListener('click', function () {
+        if (settingsScreen.style.display !== "none") {
+            settingsScreen.style.display = "none";
+            statScreen.style.display = "flex";
+            statScreen.style.order = window.getComputedStyle(settingsScreen).order;
+            settingsScreen.style.order = "1";
+        }
+    });
+}
+
+
+
+function menuScaling(menu) {
+    // Dynamically check screen size
+    if (window.matchMedia("(max-width: 425px)").matches) {
+        body.style.overflowY = "scroll";
+        body.style.overflowX = "hidden";
+        console.log("mobile");
     } else {
-        settingsScreen.style.display = "none";
+        body.style.overflow = "hidden";
+        console.log("desktop");
+    }
+
+    // Toggle display (no conflicting visibility rules)
+    if (menu.style.display === "none" || menu.style.display === "") {
+        menu.style.display = "flex";
+        menu.style.animation = "fadeIn 0.25s forwards";
+    } else {
+        menu.style.animation = "fadeOut 0.25s forwards";
+        setTimeout(() => { menu.style.display = "none"; }, 250);
     }
 }
 
+function settings() {
+    console.log("settings");
+    menuScaling(settingsScreen);
+}
+
 function stats() {
-    if (statScreen.style.display === "none" || statScreen.style.display === "") {
-        statScreen.style.display = "flex";
-    } else {
-        statScreen.style.display = "none";
-    }
+    console.log("stats");
+
+    menuScaling(statScreen);
 }
 
 
 function gameOver() {
     effectsHandler(1, 0.5)
 
+    deaths+=1;
+    console.log("Deaths: ", deaths);
+    deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
+    
+    
     //visuals:
 
     menuContainer.style.display = 'flex';
-    settingsScreen.style.display = 'none';
-    statScreen.style.display = 'none';
 
     playScreenText.textContent = "You Lost!";
 
@@ -367,8 +497,9 @@ function gameOver() {
     setTimeout(() => playScreen.classList.remove('shake'), 500);
 
     menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
-
-
+    
+    canvas.style.filter = "blur(10px)";
+    
     //changing game state:
     gameHasEnded = true;
 }
@@ -378,12 +509,23 @@ function restart() {
     console.log("----- RESTART -----");
 
     gameHasEnded = false;
+
+    // Resetting movement
+    currentDirection = null;
+    swipe = "";
     keyIsPressed = false;
+    oldXPos = [player.x];
+    oldYPos = [player.y];
     player.x = 80;
     player.y = 80;
+
     player.trail = 3;
     score = 0;
-    scoreElement.innerHTML = "Score: "+score;
+    scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
+    deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
+    statsContainer.style.display = 'flex';
+    
+    console.log("deaths "+deaths);
     
     oldXPos = [player.x];
     oldYPos = [player.y];
@@ -392,13 +534,17 @@ function restart() {
     menuContainer.style.display = 'none';
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    currentDirection = null;
-    timeToUpdate = 100;
+    
 
-    generateItems(); // Generate a new item position
-    drawGrid(); // Redraw the grid
-    drawPlayer(); // Redraw the player
-    update(); // Restart game loop
+
+    timeToUpdate = 100; // Resets the time
+
+    canvas.style.filter = "none";
+
+    drawGrid();
+    generateItems();
+    drawPlayer();
+    update();
 
     console.log("restarting game");
 
