@@ -61,22 +61,24 @@ const expandedHeight = window.innerHeight;
 const coordsX = [];
 const coordsY = [];
 
+canvas.style.filter = "blur(7px)";
+
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = 0.2;
     
+    coordsX.length = 0;
+    coordsY.length = 0;
+    
     if (compact.checked) {
         canvas.width = compactWidth;
-        canvas.height = compactHeight;           // AAAAAAAAAAAAAAAAAAAAAAAAAA SOMETHING IS WRONG ITEMS ARENT GENERATING INSIDE NEW CANVAS!!!!
-        console.log("compact");
+        canvas.height = compactHeight;
     } else if (normal.checked) {
         canvas.width = normalWidth;
         canvas.height = normalHeight;
-        console.log("normal");
     } else if (expanded.checked) {
         canvas.width = expandedWidth;
         canvas.height = expandedHeight;
-        console.log("expanded");
     }
     
     
@@ -97,7 +99,7 @@ function drawGrid() {
         coordsX.push(x);
         for (let y = 0; y < canvas.height; y += gridSize) {
             coordsY.push(y);
-            ctx.strokeStyle = '#ffffff';
+            ctx.strokeStyle = '#939393';
             ctx.strokeRect(x, y, gridSize, gridSize);
         }
     }
@@ -109,7 +111,6 @@ let itemX, itemY;
 function generateItems() {
     itemX = coordsX[Math.floor(Math.random() * coordsX.length)];
     itemY = coordsY[Math.floor(Math.random() * coordsY.length)];
-    drawItems(itemX, itemY);
 }
 
 function collisionCheck(x, y) {
@@ -120,19 +121,16 @@ function collisionCheck(x, y) {
 
 const appleTexture = new Image();
 
-appleTexture.src = "/snake/src/resources/images/apple.png";
+appleTexture.src = "/snake/src/resources/assets/apple.png";
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
     ctx.drawImage(appleTexture, itemX, itemY, gridSize, gridSize); // draw the item/s
-    console.log("itemX: " + itemX + " itemY: " + itemY);
-
-    //console.log("item is at: " + itemX + "X " + itemY + "Y");
-    //console.log("player is at: " + player.x + "X " + player.y + "Y");
 
     if (collisionCheck(itemX, itemY)) { // if player touches item then:
         effectsHandler(1, 0.5);
         player.trail+=1;
+        growing = true;
         score+=1;
         scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
         generateItems();
@@ -151,27 +149,112 @@ let oldYPos = [player.y];
 // Direction player goes in:
 let currentDirection = null;
 
-const playerTexture = new Image();
-playerTexture.src = "/snake/src/resources/images/snake-skin.png";
+const bodyHorizontal = new Image();
+bodyHorizontal.src = "/snake/src/resources/assets/snake/body_horizontal.png";
+const bodyVertical = new Image();
+bodyVertical.src = "/snake/src/resources/assets/snake/body_vertical.png";
 
+const bodyTopRight = new Image();
+bodyTopRight.src = "/snake/src/resources/assets/snake/body_topright.png";
+const bodyTopLeft = new Image();
+bodyTopLeft.src = "/snake/src/resources/assets/snake/body_topleft.png";
+
+const bodyBottomRight = new Image();
+bodyBottomRight.src = "/snake/src/resources/assets/snake/body_bottomright.png";
+const bodyBottomLeft = new Image();
+bodyBottomLeft.src = "/snake/src/resources/assets/snake/body_bottomleft.png";
+
+const headRight = new Image();
+headRight.src = "/snake/src/resources/assets/snake/head_right.png";
+const headLeft = new Image();
+headLeft.src = "/snake/src/resources/assets/snake/head_left.png";
+const headUp = new Image();
+headUp.src = "/snake/src/resources/assets/snake/head_up.png";
+const headDown = new Image();
+headDown.src = "/snake/src/resources/assets/snake/head_down.png";
+
+const tailRight = new Image();
+tailRight.src = "/snake/src/resources/assets/snake/tail_right.png";
+const tailLeft = new Image();
+tailLeft.src = "/snake/src/resources/assets/snake/tail_left.png";
+const tailUp = new Image();
+tailUp.src = "/snake/src/resources/assets/snake/tail_up.png";
+const tailDown = new Image();
+tailDown.src = "/snake/src/resources/assets/snake/tail_down.png";
+
+let oldMovements = [];
 
 function drawPlayer() {
+    ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
+    
     for (let i = 0; i < player.trail; i++) {
-        ctx.drawImage(playerTexture, oldXPos[i], oldYPos[i], gridSize, gridSize);
+        let texture = bodyHorizontal;
+
+        // only drawing tail once every call
+       if (i === 0) {
+           let tailDirection = oldMovements[0]; // grabs the tails direction
+           
+           if (tailDirection === "d") {
+               texture = tailLeft;
+           } else if (tailDirection === "a") {
+               texture = tailRight;
+           } else if (tailDirection === "w") {
+               texture = tailDown;
+           } else if (tailDirection === "s") {
+               texture = tailUp;
+           }
+       }
+        
+       if (i === player.trail -1) {
+           let headDirection = oldMovements[oldMovements.length - 1];
+           
+           if (headDirection === "d") {
+               texture = headRight;
+           } else if (headDirection === "a") {
+               texture = headLeft;
+           } else if (headDirection === "w") {
+               texture = headUp;
+           } else if (headDirection === "s") {
+               texture = headDown;
+           }
+       } 
+        
+        if (i < oldMovements.length-1) {
+            let prevMove = oldMovements[i-1];
+            let nextMove = oldMovements[i];
+
+            if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a")) {
+                texture = bodyHorizontal;
+            } else if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s")) {
+                texture = bodyVertical;
+            } else if ((prevMove === "w" && nextMove === "d") || (prevMove === "a" && nextMove === "s")) { 
+                texture = bodyBottomRight;
+            } else if ((prevMove === "d" && nextMove === "s") || (prevMove === "w" && nextMove === "a")) {
+                texture = bodyBottomLeft;
+            } else if ((prevMove === "s" && nextMove === "d") || (prevMove === "a" && nextMove === "w")) {
+                texture = bodyTopRight;
+            } else if ((prevMove === "d" && nextMove === "w") || (prevMove === "s" && nextMove === "a")) {
+                texture = bodyTopLeft;
+            }
+        }
+        ctx.drawImage(texture, oldXPos[i], oldYPos[i], gridSize, gridSize);
     }
 
-    clearTail();
     selfTailCrashCheck();
 }
-
+let growing = false;
 
 //clears the trail of the player depending on player.trail value.
 function clearTail() {
-    if (oldXPos.length === player.trail || oldYPos.length === player.trail) {
-        ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
-
-        oldXPos.shift();
-        oldYPos.shift();
+    if (oldXPos.length > player.trail) {
+        if (growing) {
+            growing = false;
+        }
+        else {    
+            oldXPos.shift();
+            oldYPos.shift();
+            oldMovements.shift();
+        }
     }
 }
 
@@ -224,9 +307,6 @@ function effectsHandler(effect, volume) {
     effectsList[effect].volume = volume;
 }
 
-diesAudio.onerror = () => console.error("Failed to load death.mp3! Check the path.");
-turnAudio.onerror = () => console.error("Failed to load move.mp3! Check the path.");
-
 let gameHasEnded = false;
 let keyIsPressed = false;
 
@@ -245,6 +325,9 @@ document.addEventListener('keydown', (e) => {
             (key === 's' && currentDirection !== 'w') ||
             (key === 'a' && currentDirection !== 'd') ||
             (key === 'd' && currentDirection !== 'a')) {
+            
+            
+            
             currentDirection = key;
 
             effectsHandler(0, 0.2);
@@ -271,9 +354,6 @@ document.addEventListener('touchend', (e) => {
     let deltaX = Math.abs(endX - startX);
     let deltaY = Math.abs(endY - startY);
     
-    console.log("deltaX: " + deltaX + " deltaY: " + deltaY);
-    console.log("startX: " + startX + " startY: " + startY);
-    console.log("endX: " + endX + " endY: " + endY);
     console.log("swipe: " + swipe)
 
     // if player has 
@@ -314,31 +394,26 @@ function update() {
         switch (currentDirection) {
             case 'w':
                 y -= player.step;
-                movePlayer(x, y);
                 keyIsPressed = false;
                 break;
             case 's':
                 y += player.step;
-                movePlayer(x, y);
                 keyIsPressed = false;
                 break;
             case 'a':
                 x -= player.step;
-                movePlayer(x, y);
                 keyIsPressed = false;
                 break;
             case 'd':
                 x += player.step;
-                movePlayer(x, y);
                 keyIsPressed = false;
                 break;
         }
+        movePlayer(x, y);
         oldXPos.push(x);
         oldYPos.push(y);
-        //console.log(oldXPos);
-        //console.log(oldYPos);
-        console.log("Current DIRECTION: ",currentDirection);
-
+        oldMovements.push(currentDirection);
+        
     }
 
     const topBoundary = 0;
@@ -352,6 +427,7 @@ function update() {
         gameOver();
     }
     drawGrid();
+    clearTail();
     drawPlayer();
     drawItems();
 
@@ -394,7 +470,6 @@ document.addEventListener('input', (e) => {
     } else if (e.target.id === 'color2'){
         accent2.value = e.target.value;
     }
-    console.log(accent1.value + ", "+ accent2.value);
 
     menuBackgroundColor(playScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
     menuBackgroundColor(settingsScreen, bodyColor1.value, bodyColor2.value, accent1.value, accent2.value);
@@ -454,8 +529,7 @@ function menuScaling(menu) {
         body.style.overflow = "hidden";
         console.log("desktop");
     }
-
-    // Toggle display (no conflicting visibility rules)
+    
     if (menu.style.display === "none" || menu.style.display === "") {
         menu.style.display = "flex";
         menu.style.animation = "fadeIn 0.25s forwards";
@@ -519,7 +593,7 @@ function restart() {
     player.x = 80;
     player.y = 80;
 
-    player.trail = 3;
+    player.trail = 4;
     score = 0;
     scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
     deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
@@ -529,14 +603,13 @@ function restart() {
     
     oldXPos = [player.x];
     oldYPos = [player.y];
+    oldMovements = [];
     console.log(playScreen);
 
     menuContainer.style.display = 'none';
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-
-
     timeToUpdate = 100; // Resets the time
 
     canvas.style.filter = "none";
@@ -545,6 +618,8 @@ function restart() {
     generateItems();
     drawPlayer();
     update();
+    player.trail+=1;
+    growing = true;
 
     console.log("restarting game");
 
