@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/snake/src/stylesheets/initial.css">
     <title>Supah Snake</title>
-    <link rel="icon" type="image/png" href="/snake/src/resources/assets/favicon.png">
+    <link rel="icon" type="image/png" href="/snake/src/resources/assets/snake_eat.png">
 
 </head>
 <body>
@@ -35,10 +35,10 @@
         <div id="playScreen">
             <img src="" alt="snake" id="snake">
             <h1 id="losingScreenText">Welcome!</h1>
-            <button id="restart" onclick="restart()" tabindex="0">Play</button>
+            <button id="restart" onclick="restart()" tabindex="1">Play</button>
             <button id="stats" onclick="stats(); document.getElementById('statScreen').scrollIntoView({behavior: 'smooth'})" tabindex="2">Stats</button>
-            <button id="settings" onclick="settings(); document.getElementById('settingsScreen').scrollIntoView({behavior: 'smooth'});" tabindex="1">Settings</button>
-            <button onclick="window.location.href='https://games.sundered.net/'">Go Back</button>
+            <button id="settings" onclick="settings(); document.getElementById('settingsScreen').scrollIntoView({behavior: 'smooth'});" tabindex="3">Settings</button>
+            <button onclick="window.location.href='https://games.sundered.net/'" tabindex="4">Go Back</button>
 
 
         </div>

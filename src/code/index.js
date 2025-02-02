@@ -149,6 +149,8 @@ let oldYPos = [player.y];
 // Direction player goes in:
 let currentDirection = null;
 
+const bodyNeutral = new Image();
+bodyNeutral.src = "/snake/src/resources/assets/snake/neutral_state.png";
 const bodyHorizontal = new Image();
 bodyHorizontal.src = "/snake/src/resources/assets/snake/body_horizontal.png";
 const bodyVertical = new Image();
@@ -188,7 +190,7 @@ function drawPlayer() {
     ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
     
     for (let i = 0; i < player.trail; i++) {
-        let texture = bodyHorizontal;
+        let texture = bodyNeutral;
 
         // only drawing tail once every call
        if (i === 0) {
