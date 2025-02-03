@@ -151,16 +151,10 @@ let currentDirection = null;
 
 const bodyNeutral = new Image();
 bodyNeutral.src = "/snake/src/resources/assets/snake/neutral_state.png";
-
-
-// todo fix textures overlap.
-// TEMPORARILY LIKE THIS UNTIL SOLUTION TO OVERLAPPING TEXTURES WHILE TURNING!
 const bodyHorizontal = new Image();
-bodyHorizontal.src = "/snake/src/resources/assets/snake/neutral_state.png";
+bodyHorizontal.src = "/snake/src/resources/assets/snake/body_horizontal.png";
 const bodyVertical = new Image();
-bodyVertical.src = "/snake/src/resources/assets/snake/neutral_state.png";
-
-
+bodyVertical.src = "/snake/src/resources/assets/snake/body_vertical.png";
 
 const bodyTopRight = new Image();
 bodyTopRight.src = "/snake/src/resources/assets/snake/body_topright.png";
@@ -226,16 +220,11 @@ function drawPlayer() {
                 texture = headDown;
             }
         }
-        
+
         if (i < oldMovements.length-1) {
             let prevMove = oldMovements[i-1];
             let nextMove = oldMovements[i];
 
-            /*
-            if ((texture === bodyHorizontal || texture === bodyVertical) && nextMove !== prevMove) {
-                return;
-            }*/
-            
             if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a")) {
                 texture = bodyHorizontal;
             } else if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s")) {
@@ -328,34 +317,25 @@ let gameHasEnded = false;
 let keyIsPressed = false;
 
 
-const validKeys = ['w', 'a', 's', 'd'];
-let nextDirection = null;
 
+const validKeys = ['w', 'a', 's', 'd'];
 // key is pressed:
 document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
     // Only updates if a valid key is pressed.
-    console.log ("player.x: ", player.x);
-    console.log ("player.y: ", player.y);
-    console.log("outside");
     if (validKeys.includes(key) && !keyIsPressed) {
-        console.log("inside");
-        console.log(" ")
-        console.log("player.x % player.step:", player.x % player.step);
-        console.log("player.y % player.step:", player.y % player.step);
-        console.log(" ")
-
 
         // Prevent reversing e.g. if going W, you cant go in S-direction
         if ((key === 'w' && currentDirection !== 's') ||
             (key === 's' && currentDirection !== 'w') ||
             (key === 'a' && currentDirection !== 'd') ||
             (key === 'd' && currentDirection !== 'a')) {
-            
-                nextDirection = key;
-                //effectsHandler(0, 0.2);
-                //keyIsPressed = true;
+
+            currentDirection = key;
+
+            effectsHandler(0, 0.2);
+            keyIsPressed = true;
         }
     }
 });
@@ -399,7 +379,7 @@ document.addEventListener('touchend', (e) => {
     // Prevent reversing e.g. if going W, you cant go in S-direction
     if ((swipe === 'w' && currentDirection !== 's') ||
         (swipe === 's' && currentDirection !== 'w') ||
-        (swipe === 'a' && currentDirection !== 'd') ||
+        (swipe === 'a' && currentDirection !== 'd') || // TODO                                            MAKE SURE TO ADD TEXTURES FOR TURNING AND SHIT
         (swipe === 'd' && currentDirection !== 'a')) {
         currentDirection = swipe;
 
@@ -412,11 +392,7 @@ let timeToUpdate = 90;
 
 function update() {
 
-    // Turn on whole tiles only.
-    // Only turn when player position e.g. 80 is divisible by gridSize e.g. 40. (so not to turn on half tiles(lines)).
-    if (player.x % gridSize === 0 && player.y % gridSize === 0 && nextDirection !== null) {
-        currentDirection = nextDirection;
-    }
+    console.log("update");
 
     // if given a direction & the player hasn't crashed then move in 'currentDirection'
     if (currentDirection) {
@@ -584,10 +560,13 @@ function gameOver() {
     console.log("Deaths: ", deaths);
     deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
 
+
     //visuals:
 
     menuContainer.style.display = 'flex';
+
     playScreenText.textContent = "You Lost!";
+
     canvas.classList.add('shake');
     playScreen.classList.add('shake');
     setTimeout(() => canvas.classList.remove('shake'), 500);
@@ -614,8 +593,6 @@ function restart() {
 
     // Resetting movement
     currentDirection = null;
-    nextDirection = null;
-    
     swipe = "";
     keyIsPressed = false;
     oldXPos = [player.x];
