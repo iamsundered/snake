@@ -156,9 +156,9 @@ bodyNeutral.src = "/snake/src/resources/assets/snake/neutral_state.png";
 // todo fix textures overlap.
 // TEMPORARILY LIKE THIS UNTIL SOLUTION TO OVERLAPPING TEXTURES WHILE TURNING!
 const bodyHorizontal = new Image();
-bodyHorizontal.src = "/snake/src/resources/assets/snake/neutral_state.png";
+bodyHorizontal.src = "/snake/src/resources/assets/snake/body_horizontal.png";
 const bodyVertical = new Image();
-bodyVertical.src = "/snake/src/resources/assets/snake/neutral_state.png";
+bodyVertical.src = "/snake/src/resources/assets/snake/body_vertical.png";
 
 
 
@@ -191,6 +191,16 @@ const tailDown = new Image();
 tailDown.src = "/snake/src/resources/assets/snake/tail_down.png";
 
 let oldMovements = [];
+let playerSizeX = null;
+let playerSizeY = null;
+
+
+let textures =
+    [
+        bodyHorizontal, bodyVertical, bodyTopRight, bodyTopLeft,
+        bodyBottomRight, bodyBottomLeft, headRight, headLeft, headUp, headDown,
+        tailRight, tailLeft, tailUp, tailDown
+    ];
 
 function drawPlayer() {
     ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
@@ -226,21 +236,30 @@ function drawPlayer() {
                 texture = headDown;
             }
         }
-        
+
         if (i < oldMovements.length-1) {
             let prevMove = oldMovements[i-1];
             let nextMove = oldMovements[i];
+            let beforeAndAfterTurn = true;
 
             /*
             if ((texture === bodyHorizontal || texture === bodyVertical) && nextMove !== prevMove) {
                 return;
             }*/
-            
-            if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a")) {
-                texture = bodyHorizontal;
-            } else if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s")) {
-                texture = bodyVertical;
-            } else if ((prevMove === "w" && nextMove === "d") || (prevMove === "a" && nextMove === "s")) {
+            if (oldXPos[i-1] - oldXPos[i] !== 20 || oldYPos[i-1] - oldYPos[i] !== 20) {
+                console.log(oldXPos[i]);
+                console.log("textures overlap!");
+                //console.log(oldXPos[i-1] - oldXPos[i]);
+                //console.log(oldYPos[i-1] - oldYPos[i]);
+                if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a") && beforeAndAfterTurn) {
+                    texture = bodyHorizontal;
+                } if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s") && beforeAndAfterTurn) {
+                    texture = bodyVertical;
+                }
+            }
+
+
+            if ((prevMove === "w" && nextMove === "d") || (prevMove === "a" && nextMove === "s")) {
                 texture = bodyBottomRight;
             } else if ((prevMove === "d" && nextMove === "s") || (prevMove === "w" && nextMove === "a")) {
                 texture = bodyBottomLeft;
@@ -251,6 +270,12 @@ function drawPlayer() {
             }
         }
         ctx.drawImage(texture, oldXPos[i], oldYPos[i], gridSize, gridSize);
+        let rect = texture.getBoundingClientRect();
+        console.log(`Width: ${rect.x}, Height: ${rect.y}`); // SOMETHING ALONG THESE LINES
+        //find the ones behind and infront of the turn then delete them from oldPosX,Y?
+
+
+
     }
 
     selfTailCrashCheck();
@@ -340,12 +365,6 @@ document.addEventListener('keydown', (e) => {
     console.log ("player.y: ", player.y);
     console.log("outside");
     if (validKeys.includes(key) && !keyIsPressed) {
-        console.log("inside");
-        console.log(" ")
-        console.log("player.x % player.step:", player.x % player.step);
-        console.log("player.y % player.step:", player.y % player.step);
-        console.log(" ")
-
 
         // Prevent reversing e.g. if going W, you cant go in S-direction
         if ((key === 'w' && currentDirection !== 's') ||
