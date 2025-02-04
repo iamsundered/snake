@@ -49,7 +49,7 @@ html, body {
     order: 3;
 }
 
-@media screen and (max-width: 425px) {
+@media screen and (max-width: 649px) {
     * {
         max-width: 100vw;
     }
@@ -69,12 +69,6 @@ html, body {
     }
     #statScreen {
         order: 3;
-    }
-}
-@media screen and (min-width: 426px) {
-    #settingsScreen {
-    }
-    #statScreen {
     }
 }
 
@@ -132,7 +126,7 @@ a {
 }
 
 
-#map-section {
+#map-section, #speed-section, #type-section, #themes-section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,34 +138,6 @@ a {
     width: 90%;
 }
 
-
-
-#speed-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #616161;
-    border-radius: 5px;
-    padding: 0 10px 10px 10px;
-    width: 90%;
-}
-
-
-
-
-#themes-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #616161;
-    border-radius: 5px;
-    padding: 0 10px 10px 10px;
-    width: 90%;
-}
 
 #colorContainer {
     display: flex;

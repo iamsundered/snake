@@ -62,25 +62,48 @@ const coordsX = [];
 const coordsY = [];
 
 canvas.style.filter = "blur(7px)";
+let type = 1;
+
+function checkSelectedMapSize() {
+    if (compact.checked) {
+        if (canvas.width >= canvas.height)
+        {
+            canvas.width = compactWidth*type;
+            canvas.height = compactHeight;
+        } else {
+            canvas.width = compactWidth;
+            canvas.height = compactHeight*type;
+        }
+    } else if (normal.checked) {
+        if (canvas.width >= canvas.height)
+        {
+            canvas.width = normalWidth*type;
+            canvas.height = normalHeight;
+        } else {
+            canvas.width = normalWidth;
+            canvas.height = normalHeight*type;
+        }
+
+    } else if (expanded.checked) {
+        if (canvas.width >= canvas.height)
+        {
+            canvas.width = expandedWidth*type;
+            canvas.height = expandedHeight;
+        } else {
+            canvas.width = expandedWidth;
+            canvas.height = expandedHeight*type;
+        }
+    }
+
+}
+
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.globalAlpha = 0.2;
+    ctx.globalAlpha = 0.4;
 
     coordsX.length = 0;
     coordsY.length = 0;
-
-    if (compact.checked) {
-        canvas.width = compactWidth;
-        canvas.height = compactHeight;
-    } else if (normal.checked) {
-        canvas.width = normalWidth;
-        canvas.height = normalHeight;
-    } else if (expanded.checked) {
-        canvas.width = expandedWidth;
-        canvas.height = expandedHeight;
-    }
-
 
 
     // Makes sure there are only full squares and not e.g. 1/2 or 1/3 etc.
@@ -111,6 +134,10 @@ let itemX, itemY;
 function generateItems() {
     itemX = coordsX[Math.floor(Math.random() * coordsX.length)];
     itemY = coordsY[Math.floor(Math.random() * coordsY.length)];
+    if (oldXPos.includes(itemX) || oldYPos.includes(itemY)) {
+        console.log("SPAWN OVERLAP");
+        generateItems();
+    }
 }
 
 function collisionCheck(x, y) {
@@ -314,13 +341,14 @@ function effectsHandler(effect, volume) {
     effectsList[effect].volume = volume;
 }
 
-let gameHasEnded = false;
+let gameHasEnded = true;
 let keyIsPressed = false;
 
 
 const validKeys = ['w', 'a', 's', 'd'];
 let nextDirection = null;
 
+// only allow input while game is on.
 // key is pressed:
 document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
@@ -333,10 +361,10 @@ document.addEventListener('keydown', (e) => {
             (key === 's' && currentDirection !== 'w') ||
             (key === 'a' && currentDirection !== 'd') ||
             (key === 'd' && currentDirection !== 'a')) {
-            
-                nextDirection = key;
-                //effectsHandler(0, 0.2);
-                //keyIsPressed = true;
+
+            nextDirection = key;
+            effectsHandler(0, 0.2);
+            keyIsPressed = true;
         }
     }
 });
@@ -498,12 +526,12 @@ menuImg.src = imgList[Math.floor(Math.random() * imgList.length)];
 
 // To make sure settings() & stats () knows they're hidden.
 
-if (screen.width <= 425) {
+if (screen.width < 650) {
     settingsScreen.style.display = "none";
     statScreen.style.display = "none";
 }
 
-if (screen.width <= 768 && screen.width >= 426) {
+if (screen.width <= 940 && screen.width >= 650) {
     document.getElementById('settings').addEventListener('click', function () {
         if (statScreen.style.display !== "none") { // stat menu on ->
             statScreen.style.display = "none";
@@ -526,8 +554,8 @@ if (screen.width <= 768 && screen.width >= 426) {
 
 function menuScaling(menu) {
     // Dynamically check screen size
-    if (window.matchMedia("(max-width: 425px)").matches) {
-        body.style.overflowY = "scroll";
+    if (window.matchMedia("(max-width: 649px)").matches) {
+        body.style.overflowY = "hidden";
         body.style.overflowX = "hidden";
         console.log("mobile");
     } else {
@@ -584,11 +612,11 @@ function gameOver() {
 const slowSpeed = document.getElementById("Slowspeed");
 const normalSpeed = document.getElementById("Normalspeed");
 const fastSpeed = document.getElementById("Fastspeed");
+const casualType = document.getElementById("casual");
+const classicType = document.getElementById("classic");
 
 // Restarting the game by resetting values to default & running update loop.
 function restart() {
-    console.log("----- RESTART -----");
-
     gameHasEnded = false;
 
     // Resetting movement
@@ -597,38 +625,40 @@ function restart() {
     
     swipe = "";
     keyIsPressed = false;
-    oldXPos = [player.x];
-    oldYPos = [player.y];
     player.x = 80;
     player.y = 80;
-
+    oldXPos = [player.x];
+    oldYPos = [player.y];
     player.trail = 4;
+    oldMovements = [];
+    
     score = 0;
     scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
     deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
     statsContainer.style.display = 'flex';
-
-    console.log("deaths "+deaths);
-
-    oldXPos = [player.x];
-    oldYPos = [player.y];
-    oldMovements = [];
-    console.log(playScreen);
-
     menuContainer.style.display = 'none';
+
+    
+    
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (normalSpeed.checked) {
-        timeToUpdate = 90; // Resets the time
+        timeToUpdate = 60; // Resets the time
     } else if (fastSpeed.checked) {
-        timeToUpdate = 50;
+        timeToUpdate = 40;
     } else if (slowSpeed.checked) {
-        timeToUpdate = 150;
+        timeToUpdate = 100;
+    }
+    if (casualType.checked) {
+        type = 1;
+    } else if (classicType.checked) {
+        type = 0.5;
     }
 
     canvas.style.filter = "none";
 
+    checkSelectedMapSize();
     drawGrid();
     generateItems();
     drawPlayer();
@@ -639,6 +669,8 @@ function restart() {
     console.log("restarting game");
 
 }
+
+// todo Work on random spawn points.
 
 
 
