@@ -84,14 +84,14 @@ function drawGrid() {
 
 
     // Makes sure there are only full squares and not e.g. 1/2 or 1/3 etc.
-    let remainderWidth = canvas.width % player.step;
-    let remainderHeight = canvas.height % player.step;
+    let remainderWidth = canvas.width % gridSize;
+    let remainderHeight = canvas.height % gridSize;
 
     if (remainderWidth !== 0 ) {
-        canvas.width += (player.step - remainderWidth)-player.step;
+        canvas.width += (gridSize - remainderWidth)-gridSize;
     }
     if (remainderHeight !== 0 ) {
-        canvas.height += (player.step - remainderHeight)-player.step;
+        canvas.height += (gridSize - remainderHeight)-gridSize;
     }
 
 
@@ -152,15 +152,10 @@ let currentDirection = null;
 const bodyNeutral = new Image();
 bodyNeutral.src = "/snake/src/resources/assets/snake/neutral_state.png";
 
-
-// todo fix textures overlap.
-// TEMPORARILY LIKE THIS UNTIL SOLUTION TO OVERLAPPING TEXTURES WHILE TURNING!
 const bodyHorizontal = new Image();
 bodyHorizontal.src = "/snake/src/resources/assets/snake/body_horizontal.png";
 const bodyVertical = new Image();
 bodyVertical.src = "/snake/src/resources/assets/snake/body_vertical.png";
-
-
 
 const bodyTopRight = new Image();
 bodyTopRight.src = "/snake/src/resources/assets/snake/body_topright.png";
@@ -191,16 +186,6 @@ const tailDown = new Image();
 tailDown.src = "/snake/src/resources/assets/snake/tail_down.png";
 
 let oldMovements = [];
-let playerSizeX = null;
-let playerSizeY = null;
-
-
-let textures =
-    [
-        bodyHorizontal, bodyVertical, bodyTopRight, bodyTopLeft,
-        bodyBottomRight, bodyBottomLeft, headRight, headLeft, headUp, headDown,
-        tailRight, tailLeft, tailUp, tailDown
-    ];
 
 function drawPlayer() {
     ctx.clearRect(oldXPos[0], oldYPos[0], gridSize, gridSize);
@@ -240,26 +225,12 @@ function drawPlayer() {
         if (i < oldMovements.length-1) {
             let prevMove = oldMovements[i-1];
             let nextMove = oldMovements[i];
-            let beforeAndAfterTurn = true;
 
-            /*
-            if ((texture === bodyHorizontal || texture === bodyVertical) && nextMove !== prevMove) {
-                return;
-            }*/
-            if (oldXPos[i-1] - oldXPos[i] !== 20 || oldYPos[i-1] - oldYPos[i] !== 20) {
-                console.log(oldXPos[i]);
-                console.log("textures overlap!");
-                //console.log(oldXPos[i-1] - oldXPos[i]);
-                //console.log(oldYPos[i-1] - oldYPos[i]);
-                if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a") && beforeAndAfterTurn) {
-                    texture = bodyHorizontal;
-                } if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s") && beforeAndAfterTurn) {
-                    texture = bodyVertical;
-                }
-            }
-
-
-            if ((prevMove === "w" && nextMove === "d") || (prevMove === "a" && nextMove === "s")) {
+            if ((prevMove === "d" && nextMove === "d") || (prevMove === "a" && nextMove === "a")) {
+                texture = bodyHorizontal;
+            } else if ((prevMove === "w" && nextMove === "w") || (prevMove === "s" && nextMove === "s")) {
+                texture = bodyVertical;
+            } else if ((prevMove === "w" && nextMove === "d") || (prevMove === "a" && nextMove === "s")) {
                 texture = bodyBottomRight;
             } else if ((prevMove === "d" && nextMove === "s") || (prevMove === "w" && nextMove === "a")) {
                 texture = bodyBottomLeft;
@@ -270,12 +241,6 @@ function drawPlayer() {
             }
         }
         ctx.drawImage(texture, oldXPos[i], oldYPos[i], gridSize, gridSize);
-        let rect = texture.getBoundingClientRect();
-        console.log(`Width: ${rect.x}, Height: ${rect.y}`); // SOMETHING ALONG THESE LINES
-        //find the ones behind and infront of the turn then delete them from oldPosX,Y?
-
-
-
     }
 
     selfTailCrashCheck();
@@ -361,9 +326,6 @@ document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
     // Only updates if a valid key is pressed.
-    console.log ("player.x: ", player.x);
-    console.log ("player.y: ", player.y);
-    console.log("outside");
     if (validKeys.includes(key) && !keyIsPressed) {
 
         // Prevent reversing e.g. if going W, you cant go in S-direction
@@ -406,8 +368,6 @@ document.addEventListener('touchend', (e) => {
         } else {
             swipe = 'a';
         }
-        effectsHandler(0, 0.2);
-        keyIsPressed = true;
     } else if (deltaY > deltaX && (deltaX > 30 || deltaY > 30)){
         if (endY > startY) {
             swipe = "s";
@@ -420,7 +380,7 @@ document.addEventListener('touchend', (e) => {
         (swipe === 's' && currentDirection !== 'w') ||
         (swipe === 'a' && currentDirection !== 'd') ||
         (swipe === 'd' && currentDirection !== 'a')) {
-        currentDirection = swipe;
+        nextDirection = swipe;
 
         effectsHandler(0, 0.2);
         keyIsPressed = true;
