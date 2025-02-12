@@ -91,6 +91,11 @@ html, body {
     display: none;
 }
 
+.button {
+    margin-top: auto;
+}
+
+
 #snake {
     height: 19.5em;
     width: 17em;

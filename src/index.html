@@ -33,8 +33,6 @@
                 <div id="fastS"><label for="Fastspeed">Fast</label><input type="radio" name="speed" id="Fastspeed"></div>
             </div>
 
-
-
             <div id="themes-section">
                 <h4>Theme</h4>
                 <div id="colorContainer">
@@ -54,21 +52,25 @@
             <button id="stats" onclick="stats(); document.getElementById('statScreen').scrollIntoView({behavior: 'smooth'})" tabindex="2">Stats</button>
             <button id="settings" onclick="settings(); document.getElementById('settingsScreen').scrollIntoView({behavior: 'smooth'});" tabindex="3">Settings</button>
             <button onclick="window.location.href='https://games.sundered.net/'" tabindex="4">Go Back</button>
-
-
         </div>
 
         <div id="statScreen">
-            <button onclick="statScreen.style.display='none'">close</button>
+            <span id="statMaxEaten">0<sup><i class="fa-solid fa-star"></i></sup></span>
+            <span id="statDeathTimes">0<sup><i class="fa-solid fa-skull"></i></sup></span>
+
+            <button class="button" onclick="statScreen.style.display='none'">close</button>
+
         </div>
+
     </div>
 </div>
 <div id="ingame-stats">
     <div id="ingame-stats-container">
-        <p id="score"></p> <!-- ⭐ 0 -->
-        <p id="deaths"></p> <!-- 💀 0 -->
+        <span id="score"><sup><i class="fa-solid fa-star"></i></sup></span> <!-- ⭐ 0 -->
+        <span id="deaths"><sup><i class="fa-solid fa-skull"></i></sup></span> <!-- 💀 0 -->
     </div>
 </div>
+<script src="https://kit.fontawesome.com/d882189a7d.js" crossorigin="anonymous"></script>
 <script src="/snake/src/code/index.js"></script>
 </body>
 </html>

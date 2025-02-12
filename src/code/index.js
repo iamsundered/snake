@@ -15,6 +15,10 @@ let score = 0;
 
 const deathsElement = document.getElementById('deaths');
 let deaths = 0;
+const statMaxEaten = document.getElementById("statMaxEaten");
+let maxEaten = 0;
+const statDeathTimes = document.getElementById("statDeathTimes");
+let deathTimes = 0;
 
 
 canvas.width = window.innerWidth; // MAKE IT SO U CAN DECIDE MAP SIZE IN SETTINGS
@@ -102,9 +106,6 @@ function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = 0.4;
 
-    coordsX.length = 0;
-    coordsY.length = 0;
-
 
     // Makes sure there are only full squares and not e.g. 1/2 or 1/3 etc.
     let remainderWidth = canvas.width % gridSize;
@@ -128,6 +129,12 @@ function drawGrid() {
     }
     ctx.globalAlpha = 1;
 }
+
+/* todo MAKE PLAYER SPAWN RANDOMLY!
+function GenerateSpawnpoint() {
+    player.x = Math.random() * coordsX.length; // IT DOESN'T *TIMES* IT BY 40(player.step/gridSize)
+    player.y = Math.random() * coordsY.length;
+}*/
 
 let itemX, itemY;
 
@@ -156,10 +163,13 @@ function drawItems() {
 
     if (collisionCheck(itemX, itemY)) { // if player touches item then:
         effectsHandler(1, 0.5);
+
         player.trail+=1;
         growing = true;
         score+=1;
-        scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
+        if (score > maxEaten) maxEaten = score;
+
+        updateStats(scoreElement, score, "star");
         generateItems();
     }
 }
@@ -470,6 +480,10 @@ function update() {
     }
 } //update ends
 
+function updateStats(element, statName, symbol) {
+    element.innerHTML = '<span id='+statName+'>' + statName + '<sup><i class="fa-solid fa-'+ symbol +'"></i></sup></span>'
+
+}
 
 const playScreen = document.getElementById('playScreen');
 const playScreenText = document.getElementById('losingScreenText');
@@ -589,7 +603,6 @@ function gameOver() {
 
     deaths+=1;
     console.log("Deaths: ", deaths);
-    deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
 
     //visuals:
 
@@ -606,6 +619,11 @@ function gameOver() {
 
     //changing game state:
     gameHasEnded = true;
+
+    updateStats(statMaxEaten, maxEaten, "star");
+    updateStats(statDeathTimes, deaths, "skull");
+    updateStats(deathsElement, deaths, "skull");
+
 }
 
 
@@ -627,14 +645,15 @@ function restart() {
     keyIsPressed = false;
     player.x = 80;
     player.y = 80;
+    //GenerateSpawnpoint();
     oldXPos = [player.x];
     oldYPos = [player.y];
     player.trail = 4;
     oldMovements = [];
     
     score = 0;
-    scoreElement.innerHTML = "<span>"+score+"<sup>⭐</sup></span>";
-    deathsElement.innerHTML = "<span>"+deaths+"<sup>💀</sup></span>";
+    updateStats(scoreElement, score, "star");
+    updateStats(deathsElement, deaths, "skull");
     statsContainer.style.display = 'flex';
     menuContainer.style.display = 'none';
 
@@ -669,8 +688,6 @@ function restart() {
     console.log("restarting game");
 
 }
-
-// todo Work on random spawn points.
 
 
 
