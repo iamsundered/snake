@@ -12,13 +12,16 @@ const statsContainer = document.getElementById("ingame-stats-container")
 
 const scoreElement = document.getElementById("score");
 let score = 0;
-
 const deathsElement = document.getElementById('deaths');
 let deaths = 0;
+const tailLengthElement = document.getElementById("tailLength");
+
+
 const statMaxEaten = document.getElementById("statMaxEaten");
 let maxEaten = 0;
 const statDeathTimes = document.getElementById("statDeathTimes");
-let deathTimes = 0;
+const statMaxTailLength = document.getElementById("statMaxTailLength");
+let maxTailLength = 2.5;
 
 
 canvas.width = window.innerWidth; // MAKE IT SO U CAN DECIDE MAP SIZE IN SETTINGS
@@ -44,10 +47,11 @@ const player = {
     x: 80,
     y: 80,
     step: 20,
-    trail: 4,
+    trail: 3,
     width: gridSize,
     height: gridSize,
 };
+
 
 const compact = document.getElementById("compactMap");
 const normal = document.getElementById("normalMap");
@@ -69,6 +73,10 @@ canvas.style.filter = "blur(7px)";
 let type = 1;
 
 function checkSelectedMapSize() {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     if (compact.checked) {
         if (canvas.width >= canvas.height)
         {
@@ -152,14 +160,15 @@ function collisionCheck(x, y) {
         return true;
     }
 }
+let tailLength = player.trail-0.5;
 
 const appleTexture = new Image();
-
 appleTexture.src = "/snake/src/resources/assets/apple.png";
 
 function drawItems() {
     ctx.fillStyle = "#e63535";
     ctx.drawImage(appleTexture, itemX, itemY, gridSize, gridSize); // draw the item/s
+    console.log("Item is at: x: " + itemX + " y: " + itemY);
 
     if (collisionCheck(itemX, itemY)) { // if player touches item then:
         effectsHandler(1, 0.5);
@@ -167,9 +176,12 @@ function drawItems() {
         player.trail+=1;
         growing = true;
         score+=1;
+        tailLength+=0.5;
         if (score > maxEaten) maxEaten = score;
+        if (tailLength > maxTailLength) maxTailLength = tailLength;
 
         updateStats(scoreElement, score, "star");
+        updateStats(tailLengthElement, tailLength, "worm");
         generateItems();
     }
 }
@@ -284,11 +296,14 @@ function drawPlayer() {
 }
 let growing = false;
 
+
+
 //clears the trail of the player depending on player.trail value.
 function clearTail() {
     if (oldXPos.length > player.trail) {
         if (growing) {
             growing = false;
+
         }
         else {
             oldXPos.shift();
@@ -335,9 +350,6 @@ document.addEventListener('keydown', (e) => {
         player.trail += 1;
     }
 });
-
-/* ^^^^^^^ */
-
 
 
 // preloading audio into memory
@@ -469,6 +481,7 @@ function update() {
         player.y >= Math.max(canvas.height+39 - player.height, 0) || player.y <= Math.min(0-39, player.y)) {
         gameOver();
     }
+    checkSelectedMapSize();
     drawGrid();
     clearTail();
     drawPlayer();
@@ -481,7 +494,7 @@ function update() {
 } //update ends
 
 function updateStats(element, statName, symbol) {
-    element.innerHTML = '<span id='+statName+'>' + statName + '<sup><i class="fa-solid fa-'+ symbol +'"></i></sup></span>'
+    element.innerHTML = '<span id='+statName+'>' + statName.toFixed(1) + '<sup><i class="fa-solid fa-'+ symbol +'"></i></sup></span>'
 
 }
 
@@ -622,8 +635,10 @@ function gameOver() {
 
     updateStats(statMaxEaten, maxEaten, "star");
     updateStats(statDeathTimes, deaths, "skull");
+    updateStats(statMaxTailLength, maxTailLength, "worm");
     updateStats(deathsElement, deaths, "skull");
 
+    statsContainer.style.display = 'none';
 }
 
 
@@ -632,6 +647,10 @@ const normalSpeed = document.getElementById("Normalspeed");
 const fastSpeed = document.getElementById("Fastspeed");
 const casualType = document.getElementById("casual");
 const classicType = document.getElementById("classic");
+
+
+// TODO SOME TIMES ITEMS ARE SPAWNING OUTSIDE WHILE IN CLASSIC MAP MODE. STILL DO SOMETHING ABOUT IT BECAUSE NOW ITS CALLING DRAWGRID TWICE IN UPDATE
+
 
 // Restarting the game by resetting values to default & running update loop.
 function restart() {
@@ -648,15 +667,16 @@ function restart() {
     //GenerateSpawnpoint();
     oldXPos = [player.x];
     oldYPos = [player.y];
-    player.trail = 4;
+    player.trail = 3;
     oldMovements = [];
     
     score = 0;
+    tailLength = 2.5;
     updateStats(scoreElement, score, "star");
     updateStats(deathsElement, deaths, "skull");
+    updateStats(tailLengthElement, tailLength, "worm");
     statsContainer.style.display = 'flex';
     menuContainer.style.display = 'none';
-
     
     
 

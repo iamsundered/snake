@@ -121,6 +121,7 @@ a {
     color: white;
     cursor: pointer;
 }
+
 #menuScreen button:active {
     box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.75);
 }
@@ -158,8 +159,6 @@ input[type="color"] {
 }
 
 
-
-
 #ingame-stats {
     position: absolute;
     top: 0;
@@ -181,7 +180,8 @@ input[type="color"] {
     justify-content: center;
     gap: 10px;
     font-size: 15px;
-    width: 100px;
+    width: fit-content;
+    padding: 0 20px;
     height: 40px;
     background-color: rgba(0, 0, 0, 0.74);
     border: #5c5c5c solid 1px;
@@ -189,6 +189,51 @@ input[type="color"] {
     margin-top: 10px;
 }
 
+#statScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 10px;
+    background: black;
+    padding: 0 12px;
+    min-width: 270px;
+    height: 690px;
+    overflow: hidden;
+    border: 1px solid #616161;
+}
+
+
+#statBoxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    width: fit-content;
+    height: 60%;
+    margin-top: 10px;
+}
+
+#statBoxes > span {
+    display: flex;
+    padding: 10px;
+    border: #5c5c5c solid 1px;
+    border-radius: 5px;
+    font-size: 50px;
+    width: 100%;
+    height: fit-content;
+    margin-top: auto;
+    justify-content: center;
+}
+.button-container {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
 
 
 .shake {

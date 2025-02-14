@@ -42,7 +42,9 @@
                     <input type="color" id="bodyColor2" value="#30600a">
                 </div>
             </div>
-            <button onclick="settingsScreen.style.display='none'">close</button>
+            <div class="button-container">
+                <button onclick="settingsScreen.style.display='none'">close</button>
+            </div>
         </div>
 
         <div id="playScreen">
@@ -55,10 +57,14 @@
         </div>
 
         <div id="statScreen">
-            <span id="statMaxEaten">0<sup><i class="fa-solid fa-star"></i></sup></span>
-            <span id="statDeathTimes">0<sup><i class="fa-solid fa-skull"></i></sup></span>
-
-            <button class="button" onclick="statScreen.style.display='none'">close</button>
+            <div id="statBoxes">
+                <span id="statMaxEaten">0<sup><i class="fa-solid fa-star"></i></sup></span>
+                <span id="statDeathTimes">0<sup><i class="fa-solid fa-skull"></i></sup></span>
+                <span id="statMaxTailLength">2.5<sup><i class="fa-solid fa-worm"></i></sup></span>
+            </div>
+            <div class="button-container">
+                <button class="button" onclick="statScreen.style.display='none'">close</button>
+            </div>
 
         </div>
 
@@ -68,6 +74,7 @@
     <div id="ingame-stats-container">
         <span id="score"><sup><i class="fa-solid fa-star"></i></sup></span> <!-- ⭐ 0 -->
         <span id="deaths"><sup><i class="fa-solid fa-skull"></i></sup></span> <!-- 💀 0 -->
+        <span id="tailLength"><sup><i class="fa-solid fa-worm"></i></sup></span> <!-- 🐍 0 -->
     </div>
 </div>
 <script src="https://kit.fontawesome.com/d882189a7d.js" crossorigin="anonymous"></script>
