@@ -5,9 +5,7 @@ body {
     padding: 0;
     height: 100vh;
     width: 100vw;
-    background: linear-gradient(to bottom, #0a3014, #30600a);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background: linear-gradient(to bottom, #0a3014, #30600a) no-repeat fixed;
 }
 
 html, body {
@@ -82,7 +80,7 @@ html, body {
     background: black;
     padding: 0 12px;
     min-width: 270px;
-    height: 690px;
+    height: 670px;
     overflow: hidden;
     border: 1px solid #616161;
 }
@@ -189,19 +187,6 @@ input[type="color"] {
     margin-top: 10px;
 }
 
-#statScreen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    border-radius: 10px;
-    background: black;
-    padding: 0 12px;
-    min-width: 270px;
-    height: 690px;
-    overflow: hidden;
-    border: 1px solid #616161;
-}
 
 
 #statBoxes {

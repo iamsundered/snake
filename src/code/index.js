@@ -114,6 +114,10 @@ function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = 0.4;
 
+    // Clearing coordinates to make sure there are no duplicates.
+    coordsX.length = 0;
+    coordsY.length = 0;
+
 
     // Makes sure there are only full squares and not e.g. 1/2 or 1/3 etc.
     let remainderWidth = canvas.width % gridSize;
